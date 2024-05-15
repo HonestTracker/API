@@ -10,12 +10,19 @@ return new class extends Migration {
      */
     public function up(): void
     {
+        Schema::create('categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('url');
             $table->string('site_name');
+            $table->string('category_id');
             $table->timestamps();
+            $table->foreign('category_id')->references('id')->on('categories');
         });
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
@@ -48,5 +55,6 @@ return new class extends Migration {
         Schema::dropIfExists('product_prices');
         Schema::dropIfExists('comments');
         Schema::dropIfExists('products');
+        Schema::dropIfExists('categories');
     }
 };
