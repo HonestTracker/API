@@ -24,4 +24,5 @@ Route::group(['middleware' => 'api'], function ($router) {
     });
 });
 
-Route::get('crawl', [CrawlController::class, 'get_category_products'])->name('crawl');
+Route::get('category', [CrawlController::class, 'get_category_products'])->name('get_category_products');
+Route::get('crawl', [CrawlController::class, 'crawl'])->name('crawl');

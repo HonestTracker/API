@@ -21,8 +21,7 @@ class AuthController extends \Illuminate\Routing\Controller
          $request['password'] = Hash::make($request['password']);
          //User instantie aanvragen en data invullen
          $user = new User;
-         $user->first_name = $request->first_name;
-         $user->last_name = $request->last_name;
+         $user->name = $request->name;
          $user->email = $request->email;
          $user->password = $request->password;
          $user->save();

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
+use App\Models\ProductPrice;
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Symfony\Component\DomCrawler\Crawler;
 use Illuminate\Http\Request;
@@ -9,46 +12,59 @@ use Illuminate\Http\Request;
 class CrawlController extends Controller
 {
     protected $signature = 'crawl';
-    public function get_category_products(){
+    public function get_category_products()
+    {
+        $url = "https://www.bol.com/nl/nl/l/tv-s/7291/";
         $client = new Client();
-        $response = $client->request('GET', 'https://www.bol.com/nl/nl/l/tv-s/7291/'); // Replace with the URL of the webshop
+        $response = $client->request('GET', $url); // Replace with the URL of the webshop
         $html = $response->getBody()->getContents();
 
         $crawler = new Crawler($html);
         $products = $crawler->filter('li.product-item--row');
-
-        // Iterate through each <li> element and extract the data-id attribute
+        $products = $products->slice(0, 5);
+        $count = 0;
         $ids = [];
-        $products->each(function (Crawler $product, $i) use (&$ids) {
+        $products->each(function (Crawler $product, $i) use (&$ids, $url, $count) {
             $dataId = $product->attr('data-id');
             if ($dataId) {
                 $link = $product->filter('a')->attr('href');
                 $title = $product->filter('a.product-title')->text();
                 $ids[] = [$dataId, "https://www.bol.com".$link, $title];
+                $product = new Product;
+                $product->name = $title;
+                $product->site_name = "bol.com";
+                $product->url = "https://www.bol.com".$link;
+                $product->save();
             }
-            $extractedData[] = [
-                'data-id' => $dataId,
-                'title' => $title,
-                'link' => $link
-            ];
+            $count++;
         });
         return $ids;
     }
-    public function handle()
+    public function crawl()
     {
-        // Process or store product name and price as needed
-        // For example, you can save them to the database
-        $client2 = new Client();
-        $response = $client2->request('GET', 'https://www.bol.com/nl/nl/p/mywall-tv-muurbeugel-voor-23-42-inch-schermen-full-motion-tot-25kg-zwart/9200000105605877/?bltgh=j-2pun2UHel-t3XNN0hKCA.2_18.30.ProductTitle'); // Replace with the URL of the webshop
-        $html = $response->getBody()->getContents();
-
-        $crawler = new Crawler($html);
-        $productName = $crawler->filter('[data-test="title"]')->text();
-        $productPrice = $crawler->filter('[data-test="price"]')->text();
-
-        // Process or store product name and price as needed
-        // For example, you can save them to the database
-        return [$productName, $productPrice];
-
+        $products = Product::all();
+        foreach($products as $product)
+        {
+            $client = new Client();
+            $response = $client->request('GET', $product->url);
+            $html = $response->getBody()->getContents();
+            $crawler = new Crawler($html);
+            $productPrice = $crawler->filter('[data-test="price"]')->text();
+            $productFraction = $crawler->filter('[data-test="price-fraction"]')->text();
+            $date = Carbon::now();
+            if($productFraction !== "-")
+            {
+                $productPrice = preg_replace('/ /', '.', $productPrice);
+            }
+            else
+            {
+                $productPrice = preg_replace('/[- ]/', '', $productPrice);
+            }
+            $product_price = new ProductPrice();
+            $product_price->price = $productPrice;
+            $product_price->date = $date;
+            $product_price->product_id = $product->id;
+            $product_price->save();
+        }
     }
 }
