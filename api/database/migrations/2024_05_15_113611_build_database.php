@@ -35,6 +35,7 @@ return new class extends Migration {
             $table->id();
             $table->decimal('price');
             $table->datetime('date');
+            $table->integer('change_percentage')->nullable();
             $table->unsignedBigInteger('product_id');
             $table->timestamps();
             $table->foreign('product_id')->references('id')->on('products');
