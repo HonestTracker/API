@@ -14,20 +14,19 @@ class CrawlController extends Controller
     protected $signature = 'crawl';
     public function get_category_products()
     {
-        $url = "https://www.bol.com/nl/nl/l/tv-s/7291/";
-        $site_name = "bol.com";
-        //$url = "ww.coolblue.nl/televisies/filter?sorteren=best-verkocht";
-        //$site_name = "coolblue.nl";
+        //$url = "https://www.bol.com/nl/nl/l/tv-s/7291/";
+        //$site_name = "bol.com";
+        $url = "https://www.coolblue.nl/televisies/filter?sorteren=best-verkocht";
+        $site_name = "coolblue.nl";
         $client = new Client();
-        $response = $client->request('GET', $url); // Replace with the URL of the webshop
+        $response = $client->request('GET', $url);
         $html = $response->getBody()->getContents();
-
         $crawler = new Crawler($html);
         if ($site_name == "bol.com") {
             $products = $crawler->filter('li.product-item--row');
         }
         if ($site_name == "coolblue.nl") {
-            $products = $crawler->filter('product-card');
+            $products = $crawler->filter('div.product-card.product-card__full-width.grid.gap-x--4.gap-y--2.js-product');
         }
         $products = $products->slice(0, 5);
         $count = 0;
@@ -47,22 +46,30 @@ class CrawlController extends Controller
                 }
                 $count++;
             }
-            if ($site_name == "coolblue.nl") {
-                $dataId = $product->attr('data-id');
-                if ($dataId) {
-                    $link = $product->filter('a')->attr('href');
-                    $title = $product->filter('a.product-title')->text();
-                    $ids[] = [$dataId, "https://www.bol.com" . $link, $title];
-                    $product = new Product;
-                    $product->name = $title;
-                    $product->site_name = "bol.com";
-                    $product->url = "https://www.bol.com" . $link;
-                    //$product->save();
+            elseif ($site_name == "coolblue.nl") {
+    
+                $ahref = $product->filter('.col--4 .position--relative a');
+                if ($ahref->count() > 0) {
+                    $href = $ahref->attr('href');
+                    if (preg_match('/product\/(\d+)\//', $href, $matches)) {
+                        $dataId = $matches[1];
+                    }
+                    if (!empty($dataId)) {
+                        $title = $product->filter('h3.color--link')->text();
+                        $ids[] = [$dataId, "https://www.coolblue.nl" . $href, $title];
+    
+                        $productModel = new Product;
+                        $productModel->name = $title;
+                        $productModel->site_name = "coolblue.nl";
+                        $productModel->url = "https://www.coolblue.nl" . $href;
+                        $productModel->save();
+                    }
                 }
                 $count++;
             }
         });
-        return $ids;
+    
+        return response()->json($ids);
     }
     public function crawl()
     {
