@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->string('name');
             $table->longText('url');
             $table->string('site_name');
+            $table->decimal('current_price');
+            $table->decimal('change_percentage')->nullable();
             $table->unsignedBigInteger('category_id')->nullable();
             $table->timestamps();
             $table->foreign('category_id')->references('id')->on('categories');
@@ -35,7 +37,7 @@ return new class extends Migration {
             $table->id();
             $table->decimal('price');
             $table->datetime('date');
-            $table->integer('change_percentage')->nullable();
+            $table->decimal('change_percentage')->nullable();
             $table->unsignedBigInteger('product_id');
             $table->timestamps();
             $table->foreign('product_id')->references('id')->on('products');
