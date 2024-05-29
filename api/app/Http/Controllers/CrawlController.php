@@ -59,7 +59,7 @@ class CrawlController extends Controller
                             $action = "update";
                             $product = Product::where('site_name', $site_name)->where('name', $title)->first();
                             $product->current_price = $price;
-                            //$product->update();
+                            $product->update();
                         }
                         else
                         {
@@ -69,9 +69,14 @@ class CrawlController extends Controller
                             $product->site_name = "bol.com";
                             $product->current_price = $price;
                             $product->url = "https://www.bol.com" . $link;
-                            //$product->save();
+                            $product->save();
                         }
-                        $ids[] = [$dataId, "https://www.bol.com" . $link, $title, $price, $action];
+                        $ids[] = [
+                            "data_id" => $dataId,
+                            "site_name" => "https://www.bol.com" . $link, $title,
+                            "price" => $price,
+                            "action" => $action,
+                        ];
                     }
                 } elseif ($site_name == "coolblue.nl") {
                     $ahref = $product->filter('.col--4 .position--relative a');
@@ -90,7 +95,7 @@ class CrawlController extends Controller
                                 $action = "update";
                                 $product = Product::where('site_name', $site_name)->where('name', $title)->first();
                                 $product->current_price = $price;
-                                //$product->update();
+                                $product->update();
                             }
                             else
                             {
@@ -100,10 +105,15 @@ class CrawlController extends Controller
                                 $product->site_name = "coolblue.nl";
                                 $product->current_price = $price;
                                 $product->url = "https://www.coolblue.nl" . $href;
-                                //$product->save();
+                                $product->save();
                             }
                         }
-                        $ids[] = [$dataId, "https://www.coolblue.nl" . $href, $title, $price, $action];
+                        $ids[] = [
+                            "data_id" => $dataId,
+                            "site_name" => "https://www.coolblue.com" . $href, $title,
+                            "price" => $price,
+                            "action" => $action,
+                        ];
                     }
                 } elseif ($site_name == "mediamarkt.nl") {
                     $href_component = $product->filter('a[data-test="mms-product-list-item-link"]');
@@ -122,7 +132,7 @@ class CrawlController extends Controller
                             $action = "update";
                             $product = Product::where('site_name', $site_name)->where('name', $title)->first();
                             $product->current_price = $price;
-                            //$product->update();
+                            $product->update();
                         }
                         else
                         {
@@ -132,9 +142,14 @@ class CrawlController extends Controller
                             $product->site_name = "mediamarkt.nl";
                             $product->current_price = $price;
                             $product->url = "https://www.mediamarkt.nl" . $href;
-                            //$product->save();
+                            $product->save();
                         }
-                        $ids[] = [$dataId, "https://www.mediamarkt.nl" . $href, $title, $price, $action];
+                        $ids[] = [
+                            "data_id" => $dataId,
+                            "site_name" => "https://www.mediamarkt.com" . $href, $title,
+                            "price" => $price,
+                            "action" => $action,
+                        ];
                     }
                 }
             }
