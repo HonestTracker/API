@@ -73,7 +73,8 @@ class CrawlController extends Controller
                         }
                         $ids[] = [
                             "data_id" => $dataId,
-                            "site_name" => "https://www.bol.com" . $link, $title,
+                            "site_name" => "https://www.bol.com" . $link, 
+                            "name" => $title,
                             "price" => $price,
                             "action" => $action,
                         ];
@@ -110,7 +111,8 @@ class CrawlController extends Controller
                         }
                         $ids[] = [
                             "data_id" => $dataId,
-                            "site_name" => "https://www.coolblue.com" . $href, $title,
+                            "site_name" => "https://www.coolblue.com" . $href,
+                            "name" => $title,
                             "price" => $price,
                             "action" => $action,
                         ];
@@ -146,7 +148,8 @@ class CrawlController extends Controller
                         }
                         $ids[] = [
                             "data_id" => $dataId,
-                            "site_name" => "https://www.mediamarkt.com" . $href, $title,
+                            "site_name" => "https://www.mediamarkt.com" . $href,
+                            "name" => $title,
                             "price" => $price,
                             "action" => $action,
                         ];
