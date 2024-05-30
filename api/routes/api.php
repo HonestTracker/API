@@ -24,7 +24,7 @@ Route::group(['middleware' => 'api'], function ($router) {
         Route::get('products', [CategoryController::class, 'products'])->name('products');
     });
 });
-Route::group(['middleware' => 'cors'], function ($router) {
+Route::group(['middleware' => 'corsmiddleware'], function ($router) {
     Route::get('home', [ProductController::class, 'homepage'])->name('home');
 });
 
