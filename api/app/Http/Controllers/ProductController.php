@@ -10,6 +10,6 @@ class ProductController extends Controller
     public function homepage()
     {
         $product = Product::with('prices')->first();
-        return response($product);
+        return $product;
     }
 }
