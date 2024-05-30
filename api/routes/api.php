@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CrawlController;
 use App\Http\Controllers\ProductController;
+use App\Http\Middleware\CorsMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,9 +25,7 @@ Route::group(['middleware' => 'api'], function ($router) {
         Route::get('products', [CategoryController::class, 'products'])->name('products');
     });
 });
-Route::group(['middleware' => 'corsmiddleware'], function ($router) {
-    Route::get('home', [ProductController::class, 'homepage'])->name('home');
-});
+    Route::get('home', [ProductController::class, 'homepage'])->middleware(CorsMiddleware::class)->name('home');
 
 Route::get('category', [CrawlController::class, 'get_category_products'])->name('get_category_products');
 Route::get('crawl', [CrawlController::class, 'crawl'])->name('crawl');
