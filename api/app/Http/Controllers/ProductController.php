@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function test()
+    public function homepage()
     {
         $product = Product::with('prices')->first();
-        return $product;
+        return response($product);
     }
 }

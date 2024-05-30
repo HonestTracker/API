@@ -197,5 +197,6 @@ class CrawlController extends Controller
             $product_price->product_id = $product->id;
             $product_price->save();
         }
+        return response("Products crawled!");
     }
 }
