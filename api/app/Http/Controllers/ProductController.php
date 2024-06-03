@@ -18,7 +18,8 @@ class ProductController extends Controller
         foreach($products as $product)
         {
             $new_name =  explode(' - ', $product->name, 2)[0];
-            return $new_name;
+            $product->name = $new_name;
+            $product->update();
         }
     }
 }

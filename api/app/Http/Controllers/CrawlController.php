@@ -65,7 +65,7 @@ class CrawlController extends Controller
                         {
                             $action = "new";
                             $product = new Product;
-                            $product->name = $title;
+                            $product->name = explode(' - ', $title, 2)[0];
                             $product->site_name = "bol.com";
                             $product->current_price = $price;
                             $product->url = "https://www.bol.com" . $link;
@@ -102,7 +102,7 @@ class CrawlController extends Controller
                             {
                                 $action = "new";
                                 $product = new Product;
-                                $product->name = $title;
+                                $product->name = explode(' - ', $title, 2)[0];
                                 $product->site_name = "coolblue.nl";
                                 $product->current_price = $price;
                                 $product->url = "https://www.coolblue.nl" . $href;
@@ -140,7 +140,7 @@ class CrawlController extends Controller
                         {
                             $action = "new";
                             $product = new Product;
-                            $product->name = $title;
+                            $product->name = explode(' - ', $title, 2)[0];
                             $product->site_name = "mediamarkt.nl";
                             $product->current_price = $price;
                             $product->url = "https://www.mediamarkt.nl" . $href;
