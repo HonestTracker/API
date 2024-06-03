@@ -2,7 +2,12 @@
     <ul>
         <a href="{{ route('admin.index') }}" class="block">
             <li class="p-4 hover:bg-gray-200 cursor-pointer">
-                Admin
+                Users
+            </li>
+        </a>
+        <a href="{{ route('admin.products.index') }}" class="block">
+            <li class="p-4 hover:bg-gray-200 cursor-pointer">
+                Products
             </li>
         </a>
     </ul>

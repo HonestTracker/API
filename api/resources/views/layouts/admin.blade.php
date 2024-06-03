@@ -1,5 +1,4 @@
 <head>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.7.0/flowbite.min.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -15,8 +14,8 @@
 
 <body class='bg-gray-200'>
     @include('includes.navs.main')
-    <div class="container mx-auto mt-3 grid grid-cols-5">
-        <div class="grid-start-1">
+    <div class="container grid grid-cols-5 mx-auto mt-3">
+        <div>
             @include('includes.navs.admin')
         </div>
         <div class="col-span-4">
