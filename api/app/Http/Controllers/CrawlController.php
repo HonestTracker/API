@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\ProductPrice;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use GuzzleHttp\Cookie\CookieJar;
 use Symfony\Component\DomCrawler\Crawler;
 use Illuminate\Http\Request;
 
