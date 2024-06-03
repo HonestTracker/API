@@ -29,3 +29,4 @@ Route::get('home', [ProductController::class, 'homepage'])->name('home');
 Route::get('category', [CrawlController::class, 'get_category_products'])->name('get_category_products');
 Route::get('crawl', [CrawlController::class, 'crawl'])->name('crawl');
 Route::get('test', [ProductController::class, 'test'])->name('test');
+Route::get('change', [ProductController::class, 'change_product_name'])->name('change');
