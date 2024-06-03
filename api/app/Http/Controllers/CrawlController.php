@@ -164,9 +164,48 @@ class CrawlController extends Controller
         $products = Product::all();
         foreach ($products as $product) {
             $client = new Client();
-            $response = $client->request('GET', $product->url);
-            $html = $response->getBody()->getContents();
-            $crawler = new Crawler($html);
+            $jar = new CookieJar();
+    
+            // Define a pool of user agents
+            $userAgents = [
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                // Add more user agents if needed
+            ];
+    
+            // Define a pool of proxies (if necessary)
+            $proxies = [
+                'http://proxy1.example.com:8080',
+                'http://proxy2.example.com:8080',
+                // Add more proxies as needed
+            ];
+    
+            // Select a random user agent and proxy
+            $userAgent = $userAgents[array_rand($userAgents)];
+            $proxy = $proxies[array_rand($proxies)];
+    
+            try {
+                // Add a random delay between requests
+                usleep(rand(500000, 2000000)); // 0.5 to 2 seconds delay
+    
+                $response = $client->request('GET', $product->url, [
+                    'headers' => [
+                        'User-Agent' => $userAgent,
+                        'Accept-Language' => 'en-US,en;q=0.9',
+                    ],
+                    'cookies' => $jar,
+                    'proxy' => $proxy,
+                ]);
+    
+                $html = $response->getBody()->getContents();
+                $crawler = new Crawler($html);
+    
+                // Process the crawler content as needed
+            } catch (\Exception $e) {
+                // Handle exceptions, e.g., logging the error or retrying
+                echo 'Error: ' . $e->getMessage();
+            }
             $date = Carbon::now();
             if($product->site_name == "bol.com")
             {
