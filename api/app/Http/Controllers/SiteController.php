@@ -69,6 +69,7 @@ class SiteController extends Controller
                             $product->site_id = $site->id;
                             $product->current_price = $price;
                             $product->url = "https://www.bol.com" . $link;
+                            $product->currency = "EUR";
                             $product->save();
                         }
                         $ids[] = [

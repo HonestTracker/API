@@ -45,7 +45,9 @@ class CrawlController extends Controller
 
             $product_price->product_id = $product->id;
             $product_price->save();
+            $product_price->change_percentage = mt_rand(-1000, 1000) / 100;
             $product->current_price = $price;
+            $product->change_percentage = mt_rand(-1000, 1000) / 100;
             $product->update();
         }
         return response("Products crawled!");
