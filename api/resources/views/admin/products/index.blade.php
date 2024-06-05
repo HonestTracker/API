@@ -7,23 +7,26 @@
             </div>
             <div>
                 <a href=""
-                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
+                    class="text-white bg-gray-400 cursor-not-allowed font-medium rounded-lg text-sm px-5 py-2.5">
                     Create product
                 </a>
             </div>
         </div>
         @if (count($products) <= 0)
-            <div class="font-semibold italic text-xl">No products found!</div>
+        <div class="font-semibold italic text-xl bg-white p-4 rounded-lg mt-3">No products found!</div>
         @else
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-3">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th scope="col" class="px-6 py-3">
                                 Name
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 Site
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Price
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 Last update
@@ -35,14 +38,17 @@
                     </thead>
                     <tbody>
                         @foreach ($products as $product)
-                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                <th scope="row" class="px-6 py-4 whitespace-nowrap dark:text-white">
+                            <tr class="bg-white border-b">
+                                <th scope="row" class="px-6 py-4 whitespace-nowrap">
                                     <div class="italic font-light text-gray-900">
                                         <span class="font-bold">{{ $product->name }}</span>
                                     </div>
                                 </th>
                                 <td class="px-6 py-4">
-                                    {{ $product->site_name }}
+                                    {{ $product->site->site_name }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {{ '€ ' . number_format($product->current_price, 2, ',', '.') }}
                                 </td>
                                 <td class="px-6 py-4">
                                     {{ $product->updated_at }}
@@ -50,7 +56,7 @@
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex space-x-2 justify-end">
                                         <a href="#"
-                                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                                            class="font-medium text-blue-600 hover:underline">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -58,7 +64,7 @@
                                             </svg>
                                         </a>
                                         <a href="#"
-                                            class="font-medium text-red-600 dark:text-red-500 hover:underline">
+                                            class="font-medium text-red-600 hover:underline">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -73,7 +79,7 @@
                 </table>
             </div>
             <div class="mt-3">
-                {{ $products->links('pagination::tailwind') }}
+                {{ $products->links() }}
             </div>
         @endif
     </div>

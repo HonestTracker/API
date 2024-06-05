@@ -14,6 +14,7 @@
 </head>
 
 <body class='bg-gray-200'>
+    @auth
     @include('includes.navs.main')
     <div class="container grid grid-cols-5 mx-auto mt-3">
         <div>
@@ -24,5 +25,12 @@
             @yield('content')
         </div>
     </div>
+    @endauth
+    @guest
+    <div class="container mt-6 mx-auto">
+            @include('includes.popups')
+            @yield('content')
+    </div>
+    @endguest
     @yield('scripts')
 </body>

@@ -1,4 +1,4 @@
 @extends('layouts.admin')
 @section('content')
-Test
+Welcome to the admin panel of HonestTracker.
 @endsection
