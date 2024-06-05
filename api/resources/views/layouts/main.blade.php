@@ -15,7 +15,7 @@
 
 <body class='bg-gray-200'>
     @include('includes.navs.main')
-    <div class="container grid grid-cols-5 mx-auto mt-3">
+    <div class="container mx-auto mt-3">
             @include('includes.popups')
             @yield('content')
     </div>

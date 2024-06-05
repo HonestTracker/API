@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.main')
 @section('content')
     <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
         <div class="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0 shadow-lg">
@@ -21,7 +21,7 @@
                     </div>
                     <div>
                         <label for="password" class="block mb-2 text-sm font-medium text-gray-900">Password</label>
-                        <input type="password" name="password" id="password" placeholder="••••••••"
+                        <input type="password" name="password" id="password" placeholder="Password..."
                             class="bg-gray-50 border @if ($errors->has('password')) border-red-500 @else border-gray-300 @endif  text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
                             required="">
                             @error('password')

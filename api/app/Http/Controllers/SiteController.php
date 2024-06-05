@@ -37,12 +37,12 @@ class SiteController extends Controller
             $products = $crawler->filter('li.product-item--row');
         }
         if ($site_name == "coolblue.nl") {
-            $products = $crawler->filter('div.product-card.product-card__full-width.grid.gap-x--4.gap-y--2.js-product');
+            $products = $crawler->filter('div.product-card');
         }
         $products = $products->slice(0, 5);
         $ids = [];
         $products->each(
-            function (Crawler $product, $i) use (&$ids, $url, $site) {
+            function (Crawler $product, $i) use (&$ids, $url, $site, $crawler) {
                 if ($site->site_name == "bol.com") {
                     $dataId = $product->attr('data-id');
                     if ($dataId) {
@@ -80,14 +80,14 @@ class SiteController extends Controller
                         ];
                     }
                 } elseif ($site->site_name == "coolblue.nl") {
-                    $ahref = $product->filter('.col--4 .position--relative a');
+                    $ahref = $product->filter('div.product-card__title');
                     if ($ahref->count() > 0) {
-                        $href = $ahref->attr('href');
+                        $href = $ahref->filter('a.link')->attr('href');
                         if (preg_match('/product\/(\d+)\//', $href, $matches)) {
                             $dataId = $matches[1];
                         }
                         if (!empty($dataId)) {
-                            $title = $product->filter('h3.color--link')->text();
+                            $title = $ahref->filter('a.link')->attr('title');
                             $title = explode(' - ', $title, 2)[0];
                             $raw_price = $product->filter('strong.sales-price__current.js-sales-price-current')->text();
                             $price = preg_replace('/[^\d]/', '', $raw_price);

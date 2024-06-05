@@ -26,6 +26,9 @@
                                 Site
                             </th>
                             <th scope="col" class="px-6 py-3">
+                                Category
+                            </th>
+                            <th scope="col" class="px-6 py-3">
                                 Price
                             </th>
                             <th scope="col" class="px-6 py-3">
@@ -39,13 +42,16 @@
                     <tbody>
                         @foreach ($products as $product)
                             <tr class="bg-white border-b">
-                                <th scope="row" class="px-6 py-4 whitespace-nowrap">
-                                    <div class="italic font-light text-gray-900">
+                                <th scope="row" class="px-6 py-4 max-w-xs whitespace-nowrap">
+                                    <div class="italic font-light text-gray-900 overflow-x-auto">
                                         <span class="font-bold">{{ $product->name }}</span>
                                     </div>
                                 </th>
                                 <td class="px-6 py-4">
                                     {{ $product->site->site_name }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {{ $product->site->category->name }}
                                 </td>
                                 <td class="px-6 py-4">
                                     {{ '€ ' . number_format($product->current_price, 2, ',', '.') }}
