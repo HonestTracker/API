@@ -7,9 +7,9 @@
 
         @auth
             <div class="flex col-span-2 justify-end items-center space-x-4 md:order-2">
-                <a href="{{ route('admin.index') }}" class="block bg-opacity-40 py-2 px-3 text-xl text-white rounded-lg hover:text-white bg-gray-50 hover:bg-gray-300"
+                <a href="{{ route('admin.index') }}" class="block bg-opacity-40 py-2 px-3 text-xl text-white rounded-lg hover:text-white bg-gray-50 hover:bg-teal-400"
                     aria-current="page">Admin</a>
-                <a class="block bg-opacity-40 py-2 px-3 text-xl text-white rounded-lg hover:text-white bg-gray-50 hover:bg-gray-300" href="{{ route('logout') }}"
+                <a class="block bg-opacity-40 py-2 px-3 text-xl text-white rounded-lg hover:text-white bg-gray-50 hover:bg-teal-400" href="{{ route('logout') }}"
                     onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Log out</a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf
