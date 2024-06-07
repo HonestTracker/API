@@ -38,7 +38,7 @@ class AuthController extends \Illuminate\Routing\Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
         //Als verificatie slaagt wordt er een JWT-token teruggegeven
-        return $this->respondWithToken($token);
+        return response('test');
      }
      //Functie voor het uitloggen van een ingelogde gebruiker
      public function logout(Request $request)
