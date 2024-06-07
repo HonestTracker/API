@@ -31,7 +31,8 @@ class AuthController extends \Illuminate\Routing\Controller
      //Functie voor het inloggen van een bestaande gebruiker
      public function login(Request $request)
      {
-        return response()->json($request->all());
+        $test_email = $request->email;
+        return response()->json($test_email, "test");
          //Kijken of de ingevoerde gegevens gelijk staan aan de database
          $credentials = request(['email', 'password']);
          if (!$token = auth()->attempt($credentials)) {
