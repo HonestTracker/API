@@ -31,18 +31,7 @@ class AuthController extends \Illuminate\Routing\Controller
      //Functie voor het inloggen van een bestaande gebruiker
      public function login(Request $request)
 {
-    \Log::info('Login attempt', ['email' => $request->email]);
-
     $credentials = $request->only('email', 'password');
-
-    if (!$token = auth('api')->attempt($credentials)) {
-        \Log::warning('Login failed for email', ['email' => $request->email]);
-        return response()->json(['error' => 'Unauthorized'], 401);
-    }
-
-    \Log::info('Login successful for email', ['email' => $request->email]);
-
-    return $this->respondWithToken($token);
 }
      //Functie voor het uitloggen van een ingelogde gebruiker
      public function logout(Request $request)
