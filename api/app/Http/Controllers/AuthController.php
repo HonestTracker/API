@@ -12,7 +12,7 @@ class AuthController extends \Illuminate\Routing\Controller
     //Hier vallen login en register niet onder zodat een gebruiker hier wel kan komen zonder ingelogd te zijn
     public function __construct()
     {
-        //$this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
     //Functie voor het registeren van een nieuwe gebruiker
     public function register(Request $request)
@@ -34,7 +34,7 @@ class AuthController extends \Illuminate\Routing\Controller
         $credentials = request(['email', 'password']);
         if (!$token = auth()->attempt($credentials)) {
             //Als verificatie faalt wordt er een 401 error gegooid
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Not found'], 404);
         }
         return $this->respondWithToken($token);
     }
