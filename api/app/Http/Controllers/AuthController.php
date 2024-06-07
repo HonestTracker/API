@@ -36,6 +36,7 @@ class AuthController extends \Illuminate\Routing\Controller
             //Als verificatie faalt wordt er een 401 error gegooid
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+        return $this->respondWithToken($token);
     }
     //Functie voor het uitloggen van een ingelogde gebruiker
     public function logout(Request $request)
@@ -52,7 +53,7 @@ class AuthController extends \Illuminate\Routing\Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth('api')->user(),
+            'user' => auth()->user(),
         ]);
     }
 }
