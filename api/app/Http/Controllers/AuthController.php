@@ -31,13 +31,12 @@ class AuthController extends \Illuminate\Routing\Controller
     //Functie voor het inloggen van een bestaande gebruiker
     public function login(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
-        return response()->json($user);
+        $credentials = request(['email', 'password']);
         if (!$token = auth()->attempt($credentials)) {
             //Als verificatie faalt wordt er een 401 error gegooid
-            return response()->json(['error' => 'Not found'], 404);
+            return response()->json(['error' => 'Unauthorized'], 401);
         }
-        return $this->respondWithToken($token);
+         return $this->respondWithToken($token);
     }
     //Functie voor het uitloggen van een ingelogde gebruiker
     public function logout(Request $request)

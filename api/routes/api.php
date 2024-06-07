@@ -13,7 +13,7 @@ Route::get('/user', function (Request $request) {
 //Authenticatie groep
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::get('users', [AuthController::class, 'users'])->name('users');
-    Route::get('login', [AuthController::class, 'login'])->name('api.login');
+    Route::post('login', [AuthController::class, 'login'])->name('api.login');
     Route::post('register', [AuthController::class, 'register'])->name('register');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 });
