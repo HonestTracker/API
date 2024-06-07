@@ -5,7 +5,11 @@
             <div class="text-3xl font-bold">
                 Categories
             </div>
-            <div>
+            <div class="flex">
+                <a href="{{ route('admin.categories.fetch_all_products') }}"
+                    class="text-white bg-green-500 hover:bg-green-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-3">
+                    Fetch ALL products
+                </a>
                 <a href="{{ route('admin.categories.create') }}"
                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5">
                     Create category
@@ -14,7 +18,7 @@
         </div>
         @if (count($categories) <= 0)
             <div class="font-semibold italic text-xl bg-white p-4 rounded-lg mt-3">No categories found!</div>
-        @else
+            @else
             <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-3">
                 <table class="w-full text-sm text-left rtl:text-right text-gray-500">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
@@ -42,8 +46,8 @@
                                     </div>
                                 </th>
                                 <td class="px-6 py-4">
-                                    @foreach($category->sites as $site)
-                                    +{{$site->site_name}}
+                                    @foreach ($category->sites as $site)
+                                        +{{ $site->site_name }}
                                     @endforeach
                                 </td>
                                 <td class="px-6 py-4">

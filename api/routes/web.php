@@ -2,6 +2,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CrawlController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\UserController;
@@ -24,6 +25,7 @@ Route::middleware('auth')->group(function () {
             Route::get('', [AdminController::class, 'index_users'])->name('index');
         });
         Route::group(['prefix' => 'categories', 'as' => 'categories.'], function () {
+            Route::get('fetchall', [ProductController::class, 'fetch_all_products'])->name('fetch_all_products');
             Route::get('', [AdminController::class, 'index_categories'])->name('index');
             Route::get('create', [CategoryController::class, 'create_admin'])->name('create');
             Route::post('store', [CategoryController::class, 'store_admin'])->name('store');
@@ -42,6 +44,9 @@ Route::middleware('auth')->group(function () {
         });
         Route::group(['prefix' => 'products', 'as' => 'products.'], function () {
             Route::get('', [AdminController::class, 'index_products'])->name('index');
+            Route::group(['prefix' => '{product}'], function () {
+                Route::delete('fetch', [ProductController::class, 'delete'])->name('delete');
+            });
         });
     });
 });
