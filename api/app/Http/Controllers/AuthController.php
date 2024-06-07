@@ -32,7 +32,7 @@ class AuthController extends \Illuminate\Routing\Controller
      public function login(Request $request)
      {
         $test_email = $request->email;
-        return response()->json($test_email, "test");
+        return response()->json($test_email);
          //Kijken of de ingevoerde gegevens gelijk staan aan de database
          $credentials = request(['email', 'password']);
          if (!$token = auth()->attempt($credentials)) {
