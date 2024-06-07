@@ -31,14 +31,14 @@ class AuthController extends \Illuminate\Routing\Controller
      //Functie voor het inloggen van een bestaande gebruiker
      public function login(Request $request)
      {
-         //Kijken of de ingevoerde gegevens gelijk staan aan de database
-         $credentials = request(['email', 'password']);
-         if (!$token = auth()->attempt($credentials)) {
-             //Als verificatie faalt wordt er een 401 error gegooid
-             return response()->json(['error' => 'Unauthorized'], 401);
-         }
-         //Als verificatie slaagt wordt er een JWT-token teruggegeven
-         return $this->respondWithToken($token);
+        //Kijken of de ingevoerde gegevens gelijk staan aan de database
+        $credentials = request(['email', 'password']);
+        if (!$token = auth()->attempt($credentials)) {
+            //Als verificatie faalt wordt er een 401 error gegooid
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        //Als verificatie slaagt wordt er een JWT-token teruggegeven
+        return $this->respondWithToken($token);
      }
      //Functie voor het uitloggen van een ingelogde gebruiker
      public function logout(Request $request)
