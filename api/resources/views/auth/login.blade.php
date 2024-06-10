@@ -6,7 +6,7 @@
                 <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
                     Sign in to the admin panel
                 </h1>
-                <form class="space-y-4 md:space-y-6" method="POST" action="{{ route('login_web') }}">
+                <form class="space-y-4 md:space-y-6" method="POST" action="{{ route('login') }}">
                     @csrf
                     <div>
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Your email</label>
