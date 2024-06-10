@@ -28,15 +28,6 @@ class LoginRequest extends FormRequest
             'password' => 'required',
         ];
     }
-    public function messages(): array
-    {
-        return [
-            'email.required' => 'Email is verplicht.',
-            'email.email' => 'Dit is geen geldige email.',
-            'email.exists' => 'Deze email is niet bij ons bekend.',
-            'password.required' => 'Wachtwoord is verplicht',
-        ];
-    }
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([
