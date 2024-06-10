@@ -31,10 +31,18 @@ class AuthController extends \Illuminate\Routing\Controller
     //Functie voor het inloggen van een bestaande gebruiker
     public function login(Request $request)
     {
+        return $request->all();
         $credentials = request(['email', 'password']);
         if (!$token = auth()->attempt($credentials)) {
-            //Als verificatie faalt wordt er een 401 error gegooid
             return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        if ($request->device === 'mobile') {
+            // Set token to have no expiration for mobile
+            $token = auth()->claims(['exp' => null])->attempt($credentials);
+        } else {
+            // Set token with standard expiration for web
+            $token = auth()->setTTL(config('jwt.ttl'))->attempt($credentials);
         }
          return $this->respondWithToken($token);
     }
