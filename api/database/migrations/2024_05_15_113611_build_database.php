@@ -32,7 +32,7 @@ return new class extends Migration {
             $table->decimal('current_price');
             $table->decimal('change_percentage')->nullable();
             $table->string('currency')->nullable();
-            $table->string('picture_url');
+            $table->string('picture_url')->nullable();
             $table->timestamps();
             $table->foreign('site_id')->references('id')->on('category_sites');
         });

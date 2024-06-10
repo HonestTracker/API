@@ -18,6 +18,7 @@ class Product extends Model
         'current_price',
         'change_percentage',
         'currency',
+        'picture_url',
     ];
     public function site(): BelongsTo
     {
