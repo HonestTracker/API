@@ -41,13 +41,24 @@ class CrawlController extends Controller
             $product_price = new ProductPrice();
             $product_price->price = $price;
             $product_price->date = $date;
-            $last_price = ProductPrice::where('product_id', $product->id)->first();
-
+            $last_price = ProductPrice::where('product_id', $product->id)->orderBy('date_created', 'DESC')->first();
             $product_price->product_id = $product->id;
+            if ($last_price) {
+                $change = (($price - $last_price->price) / $last_price->price) * 100;
+                $change_percentage = number_format($change, 1);
+                $product_price->change_percentage = $change_percentage;
+            } else {
+                $product_price->change_percentage = 0;
+            }
             $product_price->save();
-            $product_price->change_percentage = mt_rand(-1000, 1000) / 100;
             $product->current_price = $price;
-            $product->change_percentage = mt_rand(-1000, 1000) / 100;
+            if ($last_price) {
+                $change = (($price - $last_price->price) / $last_price->price) * 100;
+                $change_percentage = number_format($change, 1);
+                $product_price->change_percentage = $change_percentage;
+            } else {
+                $product_price->change_percentage = 0;
+            }
             $product->update();
         }
         return response("Products crawled!");
