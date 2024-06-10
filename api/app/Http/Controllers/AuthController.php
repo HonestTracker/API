@@ -36,10 +36,9 @@ class AuthController extends \Illuminate\Routing\Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        if ($request->input('device') === 'mobile') {
+        if ($request->device === 'mobile') {
             // Set token with a very long expiration time for mobile
-            $customClaims = ['exp' => now()->addYears(100)->timestamp];
-            $token = auth()->claims($customClaims)->attempt($credentials);
+            $token = auth()->claims(['exp' => null])->attempt($credentials);
         } else {
             // Set token with standard expiration time for web
             $token = auth()->setTTL(config('jwt.ttl'))->attempt($credentials);
