@@ -21,7 +21,6 @@ class UserSeeder extends Seeder
             'email' => 'admin@honesttracker.nl', 
             'email_verified_at' => now(),
             'password' => bcrypt('Honesttracker123!'), 
-            'birthday' => now(), 
             'is_admin' => 1,
             'created_at' => now(),
             'updated_at' => now(),
