@@ -26,22 +26,25 @@ return new class extends Migration {
         });
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('site_id');
             $table->string('name');
             $table->longText('url');
-            $table->unsignedBigInteger('site_id');
             $table->decimal('current_price');
             $table->decimal('change_percentage')->nullable();
             $table->string('currency')->nullable();
+            $table->string('picture_url');
             $table->timestamps();
             $table->foreign('site_id')->references('id')->on('category_sites');
         });
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->string('text');
-            $table->integer('stars');
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('product_id');
+            $table->string('text');
+            $table->decimal('stars');
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('product_id')->references('id')->on('products');
         });
         Schema::create('product_prices', function (Blueprint $table) {
             $table->id();
@@ -63,6 +66,7 @@ return new class extends Migration {
             $table->dropForeign('product_prices_product_id_foreign');
         });
         Schema::table('comments', function (Blueprint $table) {
+            $table->dropForeign('comments_product_id_foreign');
             $table->dropForeign('comments_user_id_foreign');
         });
         Schema::table('products', function (Blueprint $table) {
