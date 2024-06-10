@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -29,7 +30,7 @@ class AuthController extends \Illuminate\Routing\Controller
         return response()->json(['message' => 'Account aangemaakt! Je kan nu inloggen!']);
     }
     //Functie voor het inloggen van een bestaande gebruiker
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
         $credentials = request(['email', 'password']);
         if (!$token = auth()->attempt($credentials)) {
