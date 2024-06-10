@@ -31,7 +31,6 @@ class AuthController extends \Illuminate\Routing\Controller
     //Functie voor het inloggen van een bestaande gebruiker
     public function login(Request $request)
     {
-        return $request->all();
         $credentials = request(['email', 'password']);
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
