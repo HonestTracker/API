@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -20,7 +21,7 @@ class UserSeeder extends Seeder
             'name' => 'honestadmin', 
             'email' => 'admin@honesttracker.nl', 
             'email_verified_at' => now(),
-            'password' => bcrypt('Honesttracker123!'), 
+            'password' => Hash::make('Honesttracker123!'), 
             'is_admin' => 1,
             'created_at' => now(),
             'updated_at' => now(),
