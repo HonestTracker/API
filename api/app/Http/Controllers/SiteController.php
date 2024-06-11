@@ -63,9 +63,13 @@ class SiteController extends Controller
                             $product = Product::where('site_id', $site->id)->where('name', $title)->first();
                             $product->current_price = $price;
                             $last_price = ProductPrice::where('product_id', $product->id)->orderBy('date_created', 'DESC')->first();
-                            $change = (($price - $last_price->price) / $last_price->price) * 100;
-                            $change_percentage = number_format($change, 1);
-                            $product->change_percentage = $change_percentage;
+                            if ($last_price) {
+                                $change = (($price - $last_price->price) / $last_price->price) * 100;
+                                $change_percentage = number_format($change, 1);
+                                $product->change_percentage = $change_percentage;
+                            } else {
+                                $product->change_percentage = 0;
+                            }
                             $product->update();
                         } else {
                             $action = "new";
@@ -104,9 +108,13 @@ class SiteController extends Controller
                                 $product = Product::where('site_id', $site->id)->where('name', $title)->first();
                                 $product->current_price = $price;
                                 $last_price = ProductPrice::where('product_id', $product->id)->orderBy('date_created', 'DESC')->first();
-                                $change = (($price - $last_price->price) / $last_price->price) * 100;
-                                $change_percentage = number_format($change, 1);
-                                $product->change_percentage = $change_percentage;
+                                if ($last_price) {
+                                    $change = (($price - $last_price->price) / $last_price->price) * 100;
+                                    $change_percentage = number_format($change, 1);
+                                    $product->change_percentage = $change_percentage;
+                                } else {
+                                    $product->change_percentage = 0;
+                                }
                                 $product->update();
                             } else {
                                 $action = "new";
