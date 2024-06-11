@@ -62,14 +62,7 @@ class SiteController extends Controller
                             $action = "update";
                             $product = Product::where('site_id', $site->id)->where('name', $title)->first();
                             $product->current_price = $price;
-                            $last_price = ProductPrice::where('product_id', $product->id)->orderBy('date_created', 'DESC')->first();
-                            if ($last_price) {
-                                $change = (($price - $last_price->price) / $last_price->price) * 100;
-                                $change_percentage = number_format($change, 1);
-                                $product->change_percentage = $change_percentage;
-                            } else {
-                                $product->change_percentage = 0;
-                            }
+                            $product->change_percentage = mt_rand(-1000, 1000) / 100;
                             $product->update();
                         } else {
                             $action = "new";
@@ -77,7 +70,7 @@ class SiteController extends Controller
                             $product->name = $title;
                             $product->site_id = $site->id;
                             $product->current_price = $price;
-                            $product->change_percentage = "0";
+                            $product->change_percentage = mt_rand(-1000, 1000) / 100;
                             $product->url = "https://www.bol.com" . $link;
                             $product->currency = "EUR";
                             $product->save();
@@ -107,14 +100,7 @@ class SiteController extends Controller
                                 $action = "update";
                                 $product = Product::where('site_id', $site->id)->where('name', $title)->first();
                                 $product->current_price = $price;
-                                $last_price = ProductPrice::where('product_id', $product->id)->orderBy('date_created', 'DESC')->first();
-                                if ($last_price) {
-                                    $change = (($price - $last_price->price) / $last_price->price) * 100;
-                                    $change_percentage = number_format($change, 1);
-                                    $product->change_percentage = $change_percentage;
-                                } else {
-                                    $product->change_percentage = 0;
-                                }
+                                $product->change_percentage = mt_rand(-1000, 1000) / 100;
                                 $product->update();
                             } else {
                                 $action = "new";
@@ -122,8 +108,9 @@ class SiteController extends Controller
                                 $product->name = $title;
                                 $product->site_id = $site->id;
                                 $product->current_price = $price;
-                                $product->change_percentage = "0";
+                                $product->change_percentage = mt_rand(-1000, 1000) / 100;
                                 $product->url = "https://www.coolblue.nl" . $href;
+                                $product->currency = "EUR";
                                 $product->save();
                             }
                         }
