@@ -6,6 +6,7 @@ use App\Http\Requests\StoreSiteRequest;
 use App\Models\Category;
 use App\Models\CategorySite;
 use App\Models\Product;
+use App\Models\ProductPrice;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Symfony\Component\DomCrawler\Crawler;
@@ -61,6 +62,10 @@ class SiteController extends Controller
                             $action = "update";
                             $product = Product::where('site_id', $site->id)->where('name', $title)->first();
                             $product->current_price = $price;
+                            $last_price = ProductPrice::where('product_id', $product->id)->orderBy('date_created', 'DESC')->first();
+                            $change = (($price - $last_price->price) / $last_price->price) * 100;
+                            $change_percentage = number_format($change, 1);
+                            $product->change_percentage = $change_percentage;
                             $product->update();
                         } else {
                             $action = "new";
@@ -68,6 +73,7 @@ class SiteController extends Controller
                             $product->name = $title;
                             $product->site_id = $site->id;
                             $product->current_price = $price;
+                            $product->change_percentage = "0";
                             $product->url = "https://www.bol.com" . $link;
                             $product->currency = "EUR";
                             $product->save();
@@ -97,6 +103,10 @@ class SiteController extends Controller
                                 $action = "update";
                                 $product = Product::where('site_id', $site->id)->where('name', $title)->first();
                                 $product->current_price = $price;
+                                $last_price = ProductPrice::where('product_id', $product->id)->orderBy('date_created', 'DESC')->first();
+                                $change = (($price - $last_price->price) / $last_price->price) * 100;
+                                $change_percentage = number_format($change, 1);
+                                $product->change_percentage = $change_percentage;
                                 $product->update();
                             } else {
                                 $action = "new";
@@ -104,6 +114,7 @@ class SiteController extends Controller
                                 $product->name = $title;
                                 $product->site_id = $site->id;
                                 $product->current_price = $price;
+                                $product->change_percentage = "0";
                                 $product->url = "https://www.coolblue.nl" . $href;
                                 $product->save();
                             }
