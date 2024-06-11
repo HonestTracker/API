@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\ApiLoginRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -31,7 +32,7 @@ class AuthController extends \Illuminate\Routing\Controller
         return response()->json(['message' => 'Account aangemaakt! Je kan nu inloggen!']);
     }
     //Functie voor het inloggen van een bestaande gebruiker
-    public function login(LoginRequest $request)
+    public function login(ApiLoginRequest $request)
     {
         $credentials = request(['email', 'password']);
         if (!$token = auth()->attempt($credentials)) {
