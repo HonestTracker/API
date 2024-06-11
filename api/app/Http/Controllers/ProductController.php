@@ -60,6 +60,7 @@ class ProductController extends Controller
                             if ($product_check) {
                                 $action = "update";
                                 $product = Product::where('site_id', $site->id)->where('name', $title)->first();
+                                $product->change_percentage = mt_rand(-1000, 1000) / 100;
                                 $product->current_price = $price;
                                 $product->update();
                             } else {
@@ -67,6 +68,7 @@ class ProductController extends Controller
                                 $product = new Product;
                                 $product->name = $title;
                                 $product->site_id = $site->id;
+                                $product->change_percentage = mt_rand(-1000, 1000) / 100;
                                 $product->current_price = $price;
                                 $product->url = "https://www.bol.com" . $link;
                                 $product->currency = "EUR";
@@ -96,6 +98,7 @@ class ProductController extends Controller
                                 if ($product_check) {
                                     $action = "update";
                                     $product = Product::where('site_id', $site->id)->where('name', $title)->first();
+                                    $product->change_percentage = mt_rand(-1000, 1000) / 100;
                                     $product->current_price = $price;
                                     $product->update();
                                 } else {
@@ -103,6 +106,7 @@ class ProductController extends Controller
                                     $product = new Product;
                                     $product->name = $title;
                                     $product->site_id = $site->id;
+                                    $product->change_percentage = mt_rand(-1000, 1000) / 100;
                                     $product->current_price = $price;
                                     $product->url = "https://www.coolblue.nl" . $href;
                                     $product->save();
