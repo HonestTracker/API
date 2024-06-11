@@ -108,6 +108,7 @@ class ProductController extends Controller
                                     $product->site_id = $site->id;
                                     $product->change_percentage = mt_rand(-1000, 1000) / 100;
                                     $product->current_price = $price;
+                                    $product->currency = "EUR";
                                     $product->url = "https://www.coolblue.nl" . $href;
                                     $product->save();
                                 }
