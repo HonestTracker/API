@@ -25,7 +25,7 @@ class AuthController extends \Illuminate\Routing\Controller
         //User instantie aanvragen en data invullen
         $user = new User;
         if ($request->device === 'mobile') {
-          $user->name = "placeholder" . mt_rand(1000);
+          $user->name = "placeholder";
         }
         else
         {
