@@ -36,6 +36,7 @@ class AuthController extends \Illuminate\Routing\Controller
         $user->picture_url = "images.placeholder";
 
         $user->save();
+        return response()->json($user);
         $credentials = request(['email', 'password']);
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
