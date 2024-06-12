@@ -20,11 +20,12 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 
 //Site groep
 Route::group(['middleware' => 'api'], function ($router) {
+    Route::middleware('api')->('home', [ProductController::class, 'homepage'])->name('home');
     Route::group(['prefix' => 'categories'], function ($router) {
         Route::get('products', [CategoryController::class, 'products'])->name('products');
     });
 });
-Route::get('home', [ProductController::class, 'homepage'])->name('home');
+
 
 Route::get('crawl', [CrawlController::class, 'crawl'])->name('crawl');
 Route::get('test', [ProductController::class, 'test'])->name('test');
