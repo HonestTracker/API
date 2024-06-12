@@ -33,10 +33,7 @@ class AuthController extends \Illuminate\Routing\Controller
         $user->password = $password;
         $user->picture_url = "images.placeholder";
         $user->save();
-        $credentials = [
-            'email' => $user->email,
-            'password' => $password,
-        ];
+        $credentials = request(['email', 'password']);
         return response()->json(auth()->attempt($credentials));
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
@@ -55,7 +52,6 @@ class AuthController extends \Illuminate\Routing\Controller
     public function login(ApiLoginRequest $request)
     {
         $credentials = request(['email', 'password']);
-        dd($credentials);
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
