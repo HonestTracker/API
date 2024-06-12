@@ -35,16 +35,17 @@ class AuthController extends \Illuminate\Routing\Controller
         $user->password = $password;
         $user->picture_url = "images.placeholder";
         $user->save();
-        if (!$token = auth()->attempt([$user->email, $password])) {
+        $credentials = ([$user->email, $password]);
+        if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
         if ($request->device === 'mobile') {
             // Set token with a very long expiration time for mobile
-            $token = auth()->setTTl(100 * 365 * 24 * 60 * 60)->attempt([$user->email, $password]);
+            $token = auth()->setTTl(100 * 365 * 24 * 60 * 60)->attempt($credentials);
         } else {
             // Set token with standard expiration time for web
-            $token = auth()->setTTL(config('jwt.ttl'))->attempt([$user->email, $password]);
+            $token = auth()->setTTL(config('jwt.ttl'))->attempt($credentials);
         }
         return $this->respondWithToken($token);
     }
