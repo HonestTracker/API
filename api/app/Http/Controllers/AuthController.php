@@ -24,9 +24,16 @@ class AuthController extends \Illuminate\Routing\Controller
         $request['password'] = Hash::make($request['password']);
         //User instantie aanvragen en data invullen
         $user = new User;
-        $user->name = $request->name;
+        if ($request->device === 'mobile') {
+          $user->name = "placeholder";
+        }
+        else
+        {
+            $user->name = $request->name;
+        }
         $user->email = $request->email;
         $user->password = $request->password;
+        $user->picture_url = "images.placeholder";
         $user->save();
         $credentials = request(['email', 'password']);
         if (!$token = auth()->attempt($credentials)) {
