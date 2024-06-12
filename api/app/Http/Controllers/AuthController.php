@@ -25,10 +25,8 @@ class AuthController extends \Illuminate\Routing\Controller
         //User instantie aanvragen en data invullen
         $user = new User;
         if ($request->device === 'mobile') {
-          $user->name = "placeholder";
-        }
-        else
-        {
+            $user->name = "placeholder";
+        } else {
             $user->name = $request->name;
         }
         $user->email = $request->email;
@@ -38,7 +36,8 @@ class AuthController extends \Illuminate\Routing\Controller
         $credentials = [
             'email' => $user->email,
             'password' => $password,
-          ];
+        ];
+        return response()->json($credentials);
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
