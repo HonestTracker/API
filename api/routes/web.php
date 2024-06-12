@@ -1,5 +1,7 @@
 <?php
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CrawlController;
 use App\Http\Controllers\ProductController;
@@ -12,7 +14,7 @@ use App\Http\Middleware;
 
 Route::middleware('auth')->group(function () {
     Route::get('/', function () {
-        return redirect('/login');
+        return redirect()->action([AuthenticatedSessionController::class, 'login']);
     });
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
