@@ -21,7 +21,7 @@ class AuthController extends \Illuminate\Routing\Controller
     public function register(Request $request)
     {
         //Wachtwoord hashen
-        $request['password'] = Hash::make($request['password']);
+        $password = Hash::make($request->password);
         //User instantie aanvragen en data invullen
         $user = new User;
         if ($request->device === 'mobile') {
@@ -32,22 +32,19 @@ class AuthController extends \Illuminate\Routing\Controller
             $user->name = $request->name;
         }
         $user->email = $request->email;
-        $user->password = $request->password;
+        $user->password = $password;
         $user->picture_url = "images.placeholder";
-
         $user->save();
-        return response()->json($user);
-        $credentials = request(['email', 'password']);
-        if (!$token = auth()->attempt($credentials)) {
+        if (!$token = auth()->attempt([$user->email, $password])) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
         if ($request->device === 'mobile') {
             // Set token with a very long expiration time for mobile
-            $token = auth()->setTTl(100 * 365 * 24 * 60 * 60)->attempt($credentials);
+            $token = auth()->setTTl(100 * 365 * 24 * 60 * 60)->attempt([$user->email, $password]);
         } else {
             // Set token with standard expiration time for web
-            $token = auth()->setTTL(config('jwt.ttl'))->attempt($credentials);
+            $token = auth()->setTTL(config('jwt.ttl'))->attempt([$user->email, $password]);
         }
         return $this->respondWithToken($token);
     }
