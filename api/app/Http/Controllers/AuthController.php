@@ -6,8 +6,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ApiLoginRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends \Illuminate\Routing\Controller
 {
@@ -48,22 +50,27 @@ class AuthController extends \Illuminate\Routing\Controller
         return $this->respondWithToken($token);
     }
     //Functie voor het inloggen van een bestaande gebruiker
-    public function login(ApiLoginRequest $request)
+    public function login(ApiLoginRequest $request): JsonResponse
     {
-        $credentials = request(['email', 'password']);
+        $credentials = $request->only(['email', 'password']);
+        
+        // Attempt to get a token with the provided credentials
         if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
+        // Adjust token TTL based on device type
         if ($request->device === 'mobile') {
             // Set token with a very long expiration time for mobile
-            $token = auth('api')->setTTL(100 * 365 * 24 * 60 * 60)->attempt($credentials);
+            $token = JWTAuth::setTTL(100 * 365 * 24 * 60)->attempt($credentials);
         } else {
             // Set token with standard expiration time for web
-            $token = auth('api')->setTTL(config('jwt.ttl'))->attempt($credentials);
+            $token = JWTAuth::setTTL(config('jwt.ttl'))->attempt($credentials);
         }
+
         return $this->respondWithToken($token);
     }
+
     //Functie voor het uitloggen van een ingelogde gebruiker
     public function logout(Request $request)
     {
