@@ -6,6 +6,7 @@ use App\Models\CategorySite;
 use App\Models\Product;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ProductController extends Controller
@@ -13,7 +14,8 @@ class ProductController extends Controller
     public function homepage()
     {
         $products = Product::with('prices')->with('site')->get();
-        return $products;
+        $user = Auth::user();
+        return response()->json([$user, $products]);
     }
     public function delete(Product $product)
     {
