@@ -51,16 +51,16 @@ class AuthController extends \Illuminate\Routing\Controller
     public function login(ApiLoginRequest $request)
     {
         $credentials = request(['email', 'password']);
-        if (!$token = auth()->attempt($credentials)) {
+        if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
         if ($request->device === 'mobile') {
             // Set token with a very long expiration time for mobile
-            $token = auth()->setTTL(100 * 365 * 24 * 60 * 60)->attempt($credentials);
+            $token = auth('api')->setTTL(100 * 365 * 24 * 60 * 60)->attempt($credentials);
         } else {
             // Set token with standard expiration time for web
-            $token = auth()->setTTL(config('jwt.ttl'))->attempt($credentials);
+            $token = auth('api')->setTTL(config('jwt.ttl'))->attempt($credentials);
         }
         return $this->respondWithToken($token);
     }
@@ -78,8 +78,8 @@ class AuthController extends \Illuminate\Routing\Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user(),
+            'expires_in' => auth('api')->factory()->getTTL() * 60,
+            'user' => auth('api')->user(),
         ]);
     }
 }
