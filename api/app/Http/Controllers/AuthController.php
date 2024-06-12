@@ -55,6 +55,7 @@ class AuthController extends \Illuminate\Routing\Controller
     public function login(ApiLoginRequest $request)
     {
         $credentials = request(['email', 'password']);
+        dd($credentials);
         if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
