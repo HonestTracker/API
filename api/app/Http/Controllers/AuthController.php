@@ -20,6 +20,7 @@ class AuthController extends \Illuminate\Routing\Controller
     //Functie voor het registeren van een nieuwe gebruiker
     public function register(Request $request)
     {
+        return response()->json($request->all());
         //Wachtwoord hashen
         $request['password'] = Hash::make($request['password']);
         //User instantie aanvragen en data invullen
