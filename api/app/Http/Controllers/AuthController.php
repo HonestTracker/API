@@ -37,6 +37,10 @@ class AuthController extends \Illuminate\Routing\Controller
 
         $user->save();
         $credentials = request(['email', 'password']);
+        if (!$token = auth()->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
         if ($request->device === 'mobile') {
             // Set token with a very long expiration time for mobile
             $token = auth()->setTTl(100 * 365 * 24 * 60 * 60)->attempt($credentials);
