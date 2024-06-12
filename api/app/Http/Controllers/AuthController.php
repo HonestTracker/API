@@ -32,7 +32,7 @@ class AuthController extends \Illuminate\Routing\Controller
         $user->email = $request->email;
         $user->password = $password;
         $user->picture_url = "images.placeholder";
-        $user->save();
+        //$user->save();
         $credentials = request(['email', 'password']);
         return response()->json(auth()->attempt($credentials));
         if (!$token = auth()->attempt($credentials)) {
