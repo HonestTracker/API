@@ -20,7 +20,6 @@ class AuthController extends \Illuminate\Routing\Controller
     //Functie voor het registeren van een nieuwe gebruiker
     public function register(Request $request)
     {
-        return response()->json($request->all());
         //Wachtwoord hashen
         $request['password'] = Hash::make($request['password']);
         //User instantie aanvragen en data invullen
@@ -29,8 +28,19 @@ class AuthController extends \Illuminate\Routing\Controller
         $user->email = $request->email;
         $user->password = $request->password;
         $user->save();
+        $credentials = request(['email', 'password']);
+        if (!$token = auth()->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
-        return response()->json(['message' => 'Account aangemaakt! Je kan nu inloggen!']);
+        if ($request->device === 'mobile') {
+            // Set token with a very long expiration time for mobile
+            $token = auth()->setTTl(100 * 365 * 24 * 60 * 60)->attempt($credentials);
+        } else {
+            // Set token with standard expiration time for web
+            $token = auth()->setTTL(config('jwt.ttl'))->attempt($credentials);
+        }
+        return $this->respondWithToken($token);
     }
     //Functie voor het inloggen van een bestaande gebruiker
     public function login(ApiLoginRequest $request)
@@ -42,12 +52,12 @@ class AuthController extends \Illuminate\Routing\Controller
 
         if ($request->device === 'mobile') {
             // Set token with a very long expiration time for mobile
-             $token = auth()->setTTl(100 * 365 * 24 * 60 * 60)->attempt($credentials);
+            $token = auth()->setTTl(100 * 365 * 24 * 60 * 60)->attempt($credentials);
         } else {
             // Set token with standard expiration time for web
             $token = auth()->setTTL(config('jwt.ttl'))->attempt($credentials);
         }
-         return $this->respondWithToken($token);
+        return $this->respondWithToken($token);
     }
     //Functie voor het uitloggen van een ingelogde gebruiker
     public function logout(Request $request)
