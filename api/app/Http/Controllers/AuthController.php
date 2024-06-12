@@ -62,10 +62,10 @@ class AuthController extends \Illuminate\Routing\Controller
         // Adjust token TTL based on device type
         if ($request->device === 'mobile') {
             // Set token with a very long expiration time for mobile
-            $token = JWTAuth::setTTL(100 * 365 * 24 * 60)->attempt($credentials);
+            $token = auth('api')->setTTL(100 * 365 * 24 * 60)->attempt($credentials);
         } else {
             // Set token with standard expiration time for web
-            $token = JWTAuth::setTTL(config('jwt.ttl'))->attempt($credentials);
+            $token = auth('api')->setTTL(config('jwt.ttl'))->attempt($credentials);
         }
 
         return $this->respondWithToken($token);
