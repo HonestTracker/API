@@ -11,8 +11,9 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ProductController extends Controller
 {
-    public function homepage()
+    public function homepage(Request $request)
     {
+        return response()->json($request->all());
         $products = Product::with('prices')->with('site')->get();
         $user = Auth::user();
         return response()->json([
