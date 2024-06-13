@@ -13,8 +13,14 @@ class ProductController extends Controller
 {
     public function homepage(Request $request)
     {
-        return response()->json($request->all());
-        $products = Product::with('prices')->with('site')->get();
+        if($request->amount !== null)
+        {
+            $products = Product::with('prices', 'site')->take($request->amount)->get();
+        }
+        else
+        {
+            $products = Product::with('prices')->with('site')->get();
+        }
         $user = Auth::user();
         return response()->json([
             "user" => $user, 
