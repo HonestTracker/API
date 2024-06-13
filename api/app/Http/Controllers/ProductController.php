@@ -15,7 +15,10 @@ class ProductController extends Controller
     {
         $products = Product::with('prices')->with('site')->get();
         $user = Auth::user();
-        return response()->json([$user, $products]);
+        return response()->json([
+            "user" => $user, 
+            "products" => $products
+        ]);
     }
     public function delete(Product $product)
     {
