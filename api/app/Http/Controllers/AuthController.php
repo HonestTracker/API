@@ -76,6 +76,7 @@ class AuthController extends \Illuminate\Routing\Controller
         $user->name = $request->name;
         $user->update();
         $credentials = ['email' => $user->email, 'password' => $user->password];
+        return response()->json($credentials);
         if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
