@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Requests\ApiLoginRequest;
+use App\Http\Requests\ApiRegisterRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -20,7 +21,7 @@ class AuthController extends \Illuminate\Routing\Controller
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
     //Functie voor het registeren van een nieuwe gebruiker
-    public function register(Request $request)
+    public function register(ApiRegisterRequest $request)
     {
         //Wachtwoord hashen
         $password = Hash::make($request->password);
