@@ -20,9 +20,11 @@ class UserController extends Controller
     }
     public function delete(User $user)
     {
-        foreach($user->comments as $comment)
+        if($user->comments)
         {
-            $comment->delete();
+            foreach ($user->comments as $comment) {
+                $comment->delete();
+            }
         }
         $user->delete();
         return redirect('/admin/users')->with('success', "User deleted!");

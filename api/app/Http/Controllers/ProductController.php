@@ -29,8 +29,11 @@ class ProductController extends Controller
     }
     public function delete(Product $product)
     {
-        foreach ($product->prices as $price) {
-            $price->delete();
+        if($product->prices)
+        {
+            foreach ($product->prices as $price) {
+                $price->delete();
+            }
         }
         $product->delete();
         return redirect('/admin/products')->with('success', "Product deleted!");
