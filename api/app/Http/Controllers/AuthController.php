@@ -72,10 +72,10 @@ class AuthController extends \Illuminate\Routing\Controller
     }
     public function user_details(Request $request)
     {
-        $user = User::where('id', $request->user['id'])->first();
+        $user = User::where('id', $request->user_id)->first();
         $user->name = $request->name;
         $user->update();
-        $credentials = $request->only(['email', 'password']);
+        $credentials = ([$user->email, $user->password]);
         if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
