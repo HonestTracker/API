@@ -76,9 +76,11 @@ class AuthController extends \Illuminate\Routing\Controller
         $user->name = $request->name;
         $user->update();
         $credentials = ['email' => $user->email, 'password' => $request->password];
+        return response()->json($credentials);
         if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+        $token = auth('api')->setTTL(100 * 365 * 24 * 60)->attempt($credentials);
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
