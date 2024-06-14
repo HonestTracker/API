@@ -5,7 +5,11 @@
             <div class="text-3xl font-bold">
                 Products
             </div>
-            <div>
+            <div class="flex">
+                <a href="{{ route('api.crawl') }}"
+                    class="text-white bg-green-500 hover:bg-green-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-3">
+                    Crawl prices
+                </a>
                 <a href=""
                     class="text-white bg-gray-400 cursor-not-allowed font-medium rounded-lg text-sm px-5 py-2.5">
                     Create product
@@ -75,7 +79,7 @@
                                             @method('delete')
                                         </form>
                                         <button type="submit"
-                                        onclick="if (confirm('Weet je zeker dat je {{ $product->name }} wilt verwijderen?')) { event.preventDefault(); document.getElementById('product-delete-form-{{ $product->id }}').submit(); }""
+                                            onclick="if (confirm('Weet je zeker dat je {{ $product->name }} wilt verwijderen?')) { event.preventDefault(); document.getElementById('product-delete-form-{{ $product->id }}').submit(); }""
                                             class="font-medium text-red-600 hover:underline"><svg
                                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

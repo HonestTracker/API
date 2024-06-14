@@ -1,12 +1,11 @@
 <?php
 
 namespace App\Http\Requests;
-
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ApiLoginRequest extends FormRequest
+class ApiRegisterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +23,7 @@ class ApiLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email|exists:users,email',
+            'email' => 'required|email',
             'password' => [
                 'required',
                 'string',
@@ -34,6 +33,7 @@ class ApiLoginRequest extends FormRequest
                 'regex:/[0-9]/', // At least one digit
                 'regex:/[@$!%*?&#]/', // At least one special character
             ],
+            'password_repeat' => 'required|same:password',
         ];
     }
     protected function failedValidation(Validator $validator)

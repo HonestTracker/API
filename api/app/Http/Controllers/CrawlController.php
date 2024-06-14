@@ -49,6 +49,6 @@ class CrawlController extends Controller
             $product->change_percentage = mt_rand(-1000, 1000) / 100;
             $product->update();
         }
-        return response("Products crawled!");
+        return redirect()->back()->with('Success!', 'Prices crawled!');
     }
 }
