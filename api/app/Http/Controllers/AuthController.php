@@ -18,7 +18,7 @@ class AuthController extends \Illuminate\Routing\Controller
     //Hier vallen login en register niet onder zodat een gebruiker hier wel kan komen zonder ingelogd te zijn
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'user_details']]);
     }
     //Functie voor het registeren van een nieuwe gebruiker
     public function register(ApiRegisterRequest $request)
