@@ -36,25 +36,24 @@ class AuthController extends \Illuminate\Routing\Controller
         $user->password = $password;
         $user->picture_url = "images.placeholder";
         $user->save();
-        $credentials = request(['email', 'password']);
-        if (!$token = auth('api')->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
-
-        if ($request->device === 'mobile') {
-            // Set token with a very long expiration time for mobile
-            $token = auth('api')->setTTL(100 * 365 * 24 * 60 * 60)->attempt($credentials);
-        } else {
+        if ($request->device === 'web') {
+            $credentials = request(['email', 'password']);
+            if (!$token = auth('api')->attempt($credentials)) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
             // Set token with standard expiration time for web
             $token = auth('api')->setTTL(config('jwt.ttl'))->attempt($credentials);
+            return $this->respondWithToken($token);
         }
-        return $this->respondWithToken($token);
+        else {
+            return response()->json($user);
+        }
     }
     //Functie voor het inloggen van een bestaande gebruiker
     public function login(ApiLoginRequest $request): JsonResponse
     {
         $credentials = $request->only(['email', 'password']);
-        
+
         // Attempt to get a token with the provided credentials
         if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
@@ -69,6 +68,18 @@ class AuthController extends \Illuminate\Routing\Controller
             $token = auth('api')->setTTL(config('jwt.ttl'))->attempt($credentials);
         }
 
+        return $this->respondWithToken($token);
+    }
+    public function user_details(Request $request)
+    {
+        $user = User::where('id', $request->user->id)->first();
+        $user->name = $request->name;
+        $user->update();
+        $credentials = $request->only(['email', 'password']);
+        if (!$token = auth('api')->attempt($credentials)) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+        $token = auth('api')->setTTL(100 * 365 * 24 * 60)->attempt($credentials);
         return $this->respondWithToken($token);
     }
 
