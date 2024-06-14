@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -16,5 +17,14 @@ class UserController extends Controller
         }
         //Als verificatie slaagt wordt er een JWT-token teruggegeven
         return view('admin.index');
+    }
+    public function delete(User $user)
+    {
+        foreach($user->comments as $comment)
+        {
+            $comment->delete();
+        }
+        $user->delete();
+        return redirect('/admin/users')->with('success', "User deleted!");
     }
 }

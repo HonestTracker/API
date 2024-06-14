@@ -21,6 +21,9 @@ Route::middleware('auth')->group(function () {
 
         Route::group(['prefix' => 'users', 'as' => 'users.'], function () {
             Route::get('', [AdminController::class, 'index_users'])->name('index');
+            Route::group(['prefix' => '{user}'], function () {
+                Route::delete('delete', [UserController::class, 'delete'])->name('delete');
+            });
         });
         Route::group(['prefix' => 'categories', 'as' => 'categories.'], function () {
             Route::get('fetchall', [ProductController::class, 'fetch_all_products'])->name('fetch_all_products');
@@ -43,7 +46,7 @@ Route::middleware('auth')->group(function () {
         Route::group(['prefix' => 'products', 'as' => 'products.'], function () {
             Route::get('', [AdminController::class, 'index_products'])->name('index');
             Route::group(['prefix' => '{product}'], function () {
-                Route::delete('fetch', [ProductController::class, 'delete'])->name('delete');
+                Route::delete('delete', [ProductController::class, 'delete'])->name('delete');
             });
         });
     });
