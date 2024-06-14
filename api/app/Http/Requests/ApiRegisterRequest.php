@@ -33,7 +33,7 @@ class ApiRegisterRequest extends FormRequest
                 'regex:/[0-9]/', // At least one digit
                 'regex:/[@$!%*?&#]/', // At least one special character
             ],
-            'password_repeat' => 'required|same:password',
+            'repeat_password' => 'required|same:password',
         ];
     }
     protected function failedValidation(Validator $validator)
