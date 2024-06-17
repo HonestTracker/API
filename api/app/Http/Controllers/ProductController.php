@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\CategorySite;
 use App\Models\Product;
 use GuzzleHttp\Client;
@@ -24,6 +25,17 @@ class ProductController extends Controller
         $user = Auth::user();
         return response()->json([
             "user" => $user, 
+            "products" => $products
+        ]);
+    }
+    public function product_page(Request $request)
+    {
+        $products = Product::all();
+        $categories = Category::all();
+        $user = Auth::user();
+        return response()->json([
+            "user" => $user, 
+            "categories" => $categories,
             "products" => $products
         ]);
     }
