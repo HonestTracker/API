@@ -30,7 +30,7 @@ class ProductController extends Controller
     }
     public function product_page(Request $request)
     {
-        $products = Product::all();
+        $products = Product::with('prices')->with('site')->get();
         $categories = Category::all();
         $user = Auth::user();
         return response()->json([
