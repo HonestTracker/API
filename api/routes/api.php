@@ -18,6 +18,8 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('userdetails', [AuthController::class, 'user_details'])->name('userdetails');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 });
+Route::get('auth/google', [AuthController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
 //Site groep
 Route::group(['middleware' => 'api'], function ($router) {

@@ -28,10 +28,6 @@ class ApiRegisterRequest extends FormRequest
                 'required',
                 'string',
                 'min:5', // Minimum length of 8 characters
-                'regex:/[a-z]/', // At least one lowercase letter
-                'regex:/[A-Z]/', // At least one uppercase letter
-                'regex:/[0-9]/', // At least one digit
-                'regex:/[@$!%*?&#]/', // At least one special character
             ],
             'repeat_password' => 'required|same:password',
         ];

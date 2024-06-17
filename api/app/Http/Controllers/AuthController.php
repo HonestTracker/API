@@ -7,9 +7,12 @@ use App\Http\Requests\ApiLoginRequest;
 use App\Http\Requests\ApiRegisterRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends \Illuminate\Routing\Controller
@@ -44,8 +47,7 @@ class AuthController extends \Illuminate\Routing\Controller
             // Set token with standard expiration time for web
             $token = auth('api')->setTTL(config('jwt.ttl'))->attempt($credentials);
             return $this->respondWithToken($token);
-        }
-        else {
+        } else {
             return response()->json($user);
         }
     }
@@ -104,5 +106,26 @@ class AuthController extends \Illuminate\Routing\Controller
             'expires_in' => auth('api')->factory()->getTTL() * 60,
             'user' => auth('api')->user(),
         ]);
+    }
+    public function redirectToGoogle()
+    {
+        return Socialite::driver('google')->stateless()->redirect();
+    }
+
+    public function handleGoogleCallback()
+    {
+        $google_user = Socialite::driver('google')->stateless()->user();
+
+        // Find or create user logic
+        $user = User::firstOrCreate([
+            'email' => $google_user->getEmail(),
+        ], [
+            'name' => $google_user->getName(),
+        ]);
+        dd($user);
+        // Generate token
+        $token = $user->createToken('authToken')->accessToken;
+
+        return response()->json(['token' => $token]);
     }
 }
