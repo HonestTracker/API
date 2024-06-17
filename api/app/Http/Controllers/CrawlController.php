@@ -41,7 +41,6 @@ class CrawlController extends Controller
             $product_price = new ProductPrice();
             $product_price->price = $price;
             $product_price->date = $date;
-            $last_price = ProductPrice::where('product_id', $product->id)->orderBy('date_created', 'DESC')->first();
             $product_price->product_id = $product->id;
             $product_price->change_percentage = mt_rand(-1000, 1000) / 100;
             $product_price->save();
