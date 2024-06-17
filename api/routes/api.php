@@ -25,8 +25,10 @@ Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback
 Route::group(['middleware' => 'api'], function ($router) {
     Route::middleware('jwt.auth')->get('home', [ProductController::class, 'homepage'])->name('home');
     Route::middleware('jwt.auth')->get('products', [ProductController::class, 'product_page'])->name('product_page');
+    Route::middleware('jwt.auth')->get('products/filter', [ProductController::class, 'filter_products'])->name('filter_products');
+
     Route::group(['prefix' => 'categories'], function ($router) {
-        Route::get('products', [CategoryController::class, 'products'])->name('products');
+
     });
 });
 

@@ -39,6 +39,17 @@ class ProductController extends Controller
             "products" => $products
         ]);
     }
+    public function filter_product(Request $request)
+    {
+        $categories = Category::where('id', $request->id)->first();
+        $products = $categories->products;
+        $user = Auth::user();
+        return response()->json([
+            "user" => $user, 
+            "categories" => $categories,
+            "products" => $products,
+        ]);
+    }
     public function delete(Product $product)
     {
         if($product->prices)
