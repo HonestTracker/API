@@ -111,21 +111,45 @@ class AuthController extends \Illuminate\Routing\Controller
     {
         return Socialite::driver('google')->stateless()->redirect();
     }
-
-    public function handleGoogleCallback()
+    public function handleGoogleCallback(Request $request)
     {
-        $google_user = Socialite::driver('google')->stateless()->user();
-
-        // Find or create user logic
-        $user = User::firstOrCreate([
-            'email' => $google_user->getEmail(),
-        ], [
-            'name' => $google_user->getName(),
-        ]);
-        dd($user);
-        // Generate token
-        $token = $user->createToken('authToken')->accessToken;
-
-        return response()->json(['token' => $token]);
+        try {
+            $idToken = $request->input('token');
+            $googleUser = Socialite::driver('google')->stateless()->userFromToken($idToken);
+    
+            $user = User::where('google_id', $googleUser->id)->orWhere('email', $googleUser->email)->first();
+    
+            if ($user) {
+                // If the user exists, update the Google ID
+                if ($user->google_id === null) {
+                    $user->google_id = $googleUser->id;
+                    $user->save();
+                }
+            } else {
+                // If the user does not exist, create a new user
+                $user = User::create([
+                    'name' => $googleUser->name,
+                    'email' => $googleUser->email,
+                    'google_id' => $googleUser->id,
+                    'password' => Hash::make(uniqid()), // Generate a random password
+                    'picture_url' => $googleUser->avatar,
+                ]);
+            }
+    
+            // Generate a JWT token for the user
+            if (!$token = JWTAuth::fromUser($user)) {
+                return response()->json(['error' => 'Could not create token'], 500);
+            }
+    
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => auth('api')->factory()->getTTL() * 60,
+                'user' => $user,
+            ]);
+    
+        } catch (Exception $e) {
+            return response()->json(['error' => 'Could not authenticate with Google', 'message' => $e->getMessage()], 500);
+        }
     }
 }
