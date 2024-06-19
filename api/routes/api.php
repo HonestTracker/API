@@ -21,7 +21,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 Route::get('auth/google', [AuthController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
-//Site groep
+//Mobile route group
 Route::group(['prefix' => 'mobile'], function ($router) {
     Route::group(['middleware' => 'api'], function ($router) {
         Route::middleware('jwt.auth')->get('home', [ProductController::class, 'homepage'])->name('home');
@@ -31,7 +31,14 @@ Route::group(['prefix' => 'mobile'], function ($router) {
         });
     });
 });
-
+//Site route group
+Route::group(['prefix' => 'mobile'], function ($router) {
+        Route::get('home', [ProductController::class, 'homepage_web'])->name('home_web');
+        Route::get('products', [ProductController::class, 'product_page_web'])->name('product_page_web');
+        Route::get('products/filter', [ProductController::class, 'filter_products_web'])->name('filter_products_web');
+        Route::group(['prefix' => 'categories'], function ($router) {
+        });
+});
 
 Route::get('crawl', [CrawlController::class, 'crawl'])->name('crawl');
 Route::get('test', [ProductController::class, 'test'])->name('test');

@@ -14,18 +14,33 @@ class ProductController extends Controller
 {
     public function homepage(Request $request)
     {
-        if($request->amount !== null)
-        {
+        if ($request->amount !== null) {
             $products = Product::with('prices', 'site')->take($request->amount)->get();
-        }
-        else
-        {
+        } else {
             $products = Product::with('prices')->with('site')->get();
         }
         $user = Auth::user();
         return response()->json([
-            "user" => $user, 
+            "user" => $user,
             "products" => $products
+        ]);
+    }
+    public function homepage_web(Request $request)
+    {
+        $featured_product = Product::inRandomOrder()->with('site')->first();
+        $featured_categories = Category::inRandomOrder()->take(3);
+        // Get the latest 5 products with a positive change_percentage (latest rises)
+        $latest_rise_products = Product::where('change_percentage', '>', 0)->with('site')->latest('updated_at')->take(5)->get();
+        // Get the latest 5 products with a negative change_percentage (latest drops)
+        $latest_drop_products = Product::where('change_percentage', '<', 0)->with('site')->latest('updated_at')->take(5)->get();
+        // Get the latest 5 updated products
+        $latest_updated_products = Product::with('site')->latest('updated_at')->take(5)->get();
+        return response()->json([
+            "featured_product" => $featured_product,
+            "featured_categories" => $featured_categories,
+            "latest_rise_products" => $latest_rise_products,
+            "latest_drop_products" => $latest_drop_products,
+            "latest_updated_products" => $latest_updated_products,
         ]);
     }
     public function product_page(Request $request)
@@ -34,7 +49,7 @@ class ProductController extends Controller
         $categories = Category::all();
         $user = Auth::user();
         return response()->json([
-            "user" => $user, 
+            "user" => $user,
             "categories" => $categories,
             "products" => $products
         ]);
@@ -45,15 +60,14 @@ class ProductController extends Controller
         $products = $categories->products;
         $user = Auth::user();
         return response()->json([
-            "user" => $user, 
+            "user" => $user,
             "categories" => $categories,
             "products" => $products,
         ]);
     }
     public function delete(Product $product)
     {
-        if($product->prices)
-        {
+        if ($product->prices) {
             foreach ($product->prices as $price) {
                 $price->delete();
             }
