@@ -18,7 +18,7 @@ class CategorySite extends Model
     ];
     public function category(): BelongsTo
     {
-        return $this->BelongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id', 'id');
     }
     public function products(): HasMany
     {
