@@ -15,9 +15,9 @@ class ProductController extends Controller
     public function homepage(Request $request)
     {
         if ($request->amount !== null) {
-            $products = Product::with('prices', 'site')->take($request->amount)->get();
+            $products = Product::with(['prices', 'site.categories'])->take($request->amount)->get();
         } else {
-            $products = Product::with('prices')->with('site')->get();
+            $products = Product::with(['prices', 'site.categories'])->get();
         }
         $user = Auth::user();
         return response()->json([
