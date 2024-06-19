@@ -21,4 +21,8 @@ class ProductPrice extends Model
     {
         return $this->BelongsTo(Product::class);
     }
+    public function site(): BelongsTo
+    {
+        return $this->BelongsTo(CategorySite::class, 'site_id', 'id');
+    }
 }

@@ -24,4 +24,8 @@ class CategorySite extends Model
     {
         return $this->HasMany(Product::class, "site_id");
     }
+    public function prices(): HasMany
+    {
+        return $this->HasMany(ProductPrice::class);
+    }
 }
