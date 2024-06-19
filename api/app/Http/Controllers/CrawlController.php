@@ -49,12 +49,12 @@ class CrawlController extends Controller
                 
                 if ($price !== null) {
                     $product_price = new ProductPrice();
+                    $product_price->site_id = $product->site->id;
                     $product_price->price = $price;
                     $product_price->date = $date;
                     $product_price->product_id = $product->id;
                     $product_price->change_percentage = mt_rand(-1000, 1000) / 100;
                     $product_price->save();
-                    
                     $product->current_price = $price;
                     $product->change_percentage = mt_rand(-1000, 1000) / 100;
                     $product->update();

@@ -49,11 +49,13 @@ return new class extends Migration {
         Schema::create('product_prices', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('site_id');
             $table->decimal('price');
             $table->datetime('date');
             $table->decimal('change_percentage')->nullable();
             $table->timestamps();
             $table->foreign('product_id')->references('id')->on('products');
+            $table->foreign('site_id')->references('id')->on('category_sites');
         });
     }
 
@@ -64,6 +66,7 @@ return new class extends Migration {
     {
         Schema::table('product_prices', function (Blueprint $table) {
             $table->dropForeign('product_prices_product_id_foreign');
+            $table->dropForeign('product_prices_site_id_foreign');
         });
         Schema::table('comments', function (Blueprint $table) {
             $table->dropForeign('comments_product_id_foreign');
