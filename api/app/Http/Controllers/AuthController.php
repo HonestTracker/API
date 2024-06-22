@@ -26,6 +26,13 @@ class AuthController extends \Illuminate\Routing\Controller
     //Functie voor het registeren van een nieuwe gebruiker
     public function register(ApiRegisterRequest $request)
     {
+        $rules = [];
+
+        if ($request->input('device') === 'web') {
+            $rules['name'] = 'required|string';
+        }
+
+        $validatedData = $request->validate($rules);
         //Wachtwoord hashen
         $password = Hash::make($request->password);
         //User instantie aanvragen en data invullen
@@ -116,9 +123,9 @@ class AuthController extends \Illuminate\Routing\Controller
         try {
             $idToken = $request->input('token');
             $googleUser = Socialite::driver('google')->stateless()->userFromToken($idToken);
-    
+
             $user = User::where('google_id', $googleUser->id)->orWhere('email', $googleUser->email)->first();
-    
+
             if ($user) {
                 // If the user exists, update the Google ID
                 if ($user->google_id === null) {
@@ -135,19 +142,19 @@ class AuthController extends \Illuminate\Routing\Controller
                     'picture_url' => $googleUser->avatar,
                 ]);
             }
-    
+
             // Generate a JWT token for the user
             if (!$token = JWTAuth::fromUser($user)) {
                 return response()->json(['error' => 'Could not create token'], 500);
             }
-    
+
             return response()->json([
                 'access_token' => $token,
                 'token_type' => 'bearer',
                 'expires_in' => auth('api')->factory()->getTTL() * 60,
                 'user' => $user,
             ]);
-    
+
         } catch (Exception $e) {
             return response()->json(['error' => 'Could not authenticate with Google', 'message' => $e->getMessage()], 500);
         }
