@@ -31,8 +31,6 @@ class AuthController extends \Illuminate\Routing\Controller
         if ($request->input('device') === 'web') {
             $rules['name'] = 'required|string';
         }
-
-        $validatedData = $request->validate($rules);
         //Wachtwoord hashen
         $password = Hash::make($request->password);
         //User instantie aanvragen en data invullen

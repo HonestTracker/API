@@ -54,6 +54,17 @@ class ProductController extends Controller
             "products" => $products
         ]);
     }
+    public function product_page_web(Request $request)
+    {
+        $products = Product::with('prices')->with('site')->get();
+        $categories = Category::all();
+        $user = Auth::user();
+        return response()->json([
+            "user" => $user,
+            "categories" => $categories,
+            "products" => $products
+        ]);
+    }
     public function filter_product(Request $request)
     {
         $categories = Category::where('id', $request->id)->first();
