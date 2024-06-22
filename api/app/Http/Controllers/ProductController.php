@@ -65,17 +65,30 @@ class ProductController extends Controller
             "products" => $products
         ]);
     }
-    public function filter_product(Request $request)
-    {
-        $categories = Category::where('id', $request->id)->first();
-        $products = $categories->products;
-        $user = Auth::user();
-        return response()->json([
-            "user" => $user,
-            "categories" => $categories,
-            "products" => $products,
-        ]);
+    
+   
+public function search(Request $request)
+{
+    $searchData = $request->query('search_data'); // Fetch search data from query parameter
+
+    $query = Product::query(); // Start building the query
+
+    if ($searchData) {
+        // Filter products where the name resembles the search data
+        $query->where('name', 'like', '%' . $searchData . '%');
     }
+
+    $products = $query->get(); // Execute the query and get the results
+
+    // You can include additional data as needed, such as categories
+    $categories = Category::all();
+
+    // Return response as JSON
+    return response()->json([
+        'products' => $products,
+        'categories' => $categories,
+    ]);
+}
     public function delete(Product $product)
     {
         if ($product->prices) {

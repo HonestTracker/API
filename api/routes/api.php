@@ -34,6 +34,7 @@ Route::group(['prefix' => 'mobile'], function ($router) {
 //Site route group
 Route::get('home', [ProductController::class, 'homepage_web'])->name('home_web');
 Route::get('products', [ProductController::class, 'product_page_web'])->name('product_page_web');
+Route::get('products/search', [ProductController::class, 'search'])->name('search_products_web');
 Route::get('products/filter', [ProductController::class, 'filter_products_web'])->name('filter_products_web');
 Route::group(['prefix' => 'categories'], function ($router) {
 });
