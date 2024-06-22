@@ -57,7 +57,7 @@ class ProductController extends Controller
     public function product_page_web(Request $request)
     {
         $products = Product::with('prices')->with('site')->get();
-        $categories = Category::all();
+        $categories = Category::with('sites.products')->get();
         $user = Auth::user();
         return response()->json([
             "user" => $user,
