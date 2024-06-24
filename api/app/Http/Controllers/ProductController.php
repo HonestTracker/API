@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\CategorySite;
 use App\Models\Product;
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,23 +27,46 @@ class ProductController extends Controller
         ]);
     }
     public function homepage_web(Request $request)
-    {
-        $featured_product = Product::inRandomOrder()->with('site', 'prices.site')->first();
-        $featured_categories = Category::inRandomOrder()->take(3)->get();
-        // Get the latest 5 products with a positive change_percentage (latest rises)
-        $latest_rise_products = Product::where('change_percentage', '>', 0)->with('site')->latest('updated_at')->take(5)->get();
-        // Get the latest 5 products with a negative change_percentage (latest drops)
-        $latest_drop_products = Product::where('change_percentage', '<', 0)->with('site')->latest('updated_at')->take(5)->get();
-        // Get the latest 5 updated products
-        $latest_updated_products = Product::with('site')->latest('updated_at')->take(5)->get();
-        return response()->json([
-            "featured_product" => $featured_product,
-            "featured_categories" => $featured_categories,
-            "latest_rise_products" => $latest_rise_products,
-            "latest_drop_products" => $latest_drop_products,
-            "latest_updated_products" => $latest_updated_products,
-        ]);
-    }
+{
+    $featured_product = Product::inRandomOrder()->with('site', 'prices.site')->first();
+    $featured_categories = Category::inRandomOrder()->take(3)->get();
+
+    // Get the latest 5 products with a positive change_percentage (latest rises)
+    $latest_rise_products = Product::where('change_percentage', '>', 0)
+        ->with('site')
+        ->latest('updated_at')
+        ->take(5)
+        ->get();
+
+    // Get the latest 5 products with a negative change_percentage (latest drops)
+    $latest_drop_products = Product::where('change_percentage', '<', 0)
+        ->orWhere(function ($query) {
+            // Include products with no change but have recorded drops in history
+            $query->where('change_percentage', 0)
+                ->whereHas('prices', function ($query) {
+                    $query->where('change_percentage', '<', 0)
+                          ->where('date', '<', Carbon::now()->subDays(7)); // Adjust as needed
+                });
+        })
+        ->with('site')
+        ->latest('updated_at')
+        ->take(5)
+        ->get();
+
+    // Get the latest 5 updated products
+    $latest_updated_products = Product::with('site')
+        ->latest('updated_at')
+        ->take(5)
+        ->get();
+
+    return response()->json([
+        "featured_product" => $featured_product,
+        "featured_categories" => $featured_categories,
+        "latest_rise_products" => $latest_rise_products,
+        "latest_drop_products" => $latest_drop_products,
+        "latest_updated_products" => $latest_updated_products,
+    ]);
+}
     public function product_page(Request $request)
     {
         $products = Product::with(['prices', 'site.category'])->get();
