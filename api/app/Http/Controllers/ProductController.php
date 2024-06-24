@@ -66,7 +66,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function search_product_mobile(Request $request)
+    public function search_product(Request $request)
     {
         $searchData = $request->search_data;
     
