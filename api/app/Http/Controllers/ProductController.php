@@ -120,13 +120,14 @@ class ProductController extends Controller
         $id = $request->id;
         if($id = "all")
         {
-            return response()->json('whaaaaaaaaaa');
+            $products = Product::with(['prices', 'site.category'])->get();
         }
-        // Assuming your logic to filter products based on search data
-        $products = Product::whereHas('site', function ($query) use ($id) {
-            $query->where('category_id', $id);
-        })->with(['prices', 'site.category'])->get();
-    
+        else
+        {
+            $products = Product::whereHas('site', function ($query) use ($id) {
+                $query->where('category_id', $id);
+            })->with(['prices', 'site.category'])->get();
+        }
         // Fetch categories related to the searched products
         $categories = Category::where('id', $id)->get();
     
