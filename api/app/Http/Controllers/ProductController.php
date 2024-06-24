@@ -118,7 +118,6 @@ class ProductController extends Controller
     public function filter_products(Request $request)
     {
         $id = $request->id;
-        return response()->json($id);
         if($id = "all")
         {
             $products = Product::with(['prices', 'site.category'])->get();
@@ -128,7 +127,7 @@ class ProductController extends Controller
             $products = Product::whereHas('site', function ($query) use ($id) {
                 $query->where('category_id', $id);
             })->with(['prices', 'site.category'])->get();
-      
+            return $products;
         }
     
         $user = Auth::user();
