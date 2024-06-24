@@ -22,7 +22,7 @@ class Product extends Model
     ];
     public function site(): BelongsTo
     {
-        return $this->BelongsTo(CategorySite::class);
+        return $this->belongsTo(CategorySite::class, 'site_id');
     }
     public function prices(): HasMany
     {
