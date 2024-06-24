@@ -128,14 +128,11 @@ class ProductController extends Controller
                 $query->where('category_id', $id);
             })->with(['prices', 'site.category'])->get();
         }
-        // Fetch categories related to the searched products
-        $categories = Category::where('id', $id)->get();
     
         $user = Auth::user();
         
         return response()->json([
             "user" => $user,
-            "categories" => $categories,
             "products" => $products
         ]);
     }
