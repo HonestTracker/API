@@ -123,7 +123,7 @@ class ProductController extends Controller
         // Assuming your logic to filter products based on search data
         $products = Product::whereHas('site', function ($query) use ($id) {
             $query->where('category_id', $id);
-        })->get();
+        })->with(['prices', 'site.category'])->get();
     
         // Fetch categories related to the searched products
         $categories = Category::where('id', $id)->get();
