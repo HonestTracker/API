@@ -120,6 +120,7 @@ class ProductController extends Controller
         $id = $request->id;
         if($id = "all")
         {
+            return 'test';
             $products = Product::with(['prices', 'site.category'])->get();
         }
         else
@@ -127,7 +128,6 @@ class ProductController extends Controller
             $products = Product::whereHas('site', function ($query) use ($id) {
                 $query->where('category_id', $id);
             })->with(['prices', 'site.category'])->get();
-            return $products;
         }
     
         $user = Auth::user();
