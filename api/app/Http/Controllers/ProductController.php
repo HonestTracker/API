@@ -116,7 +116,26 @@ class ProductController extends Controller
             "products" => $products
         ]);
     }
+    public function filter_products(Request $request)
+    {
+        $id = $request->id;
     
+        // Assuming your logic to filter products based on search data
+        $products = Product::whereHas('site', function ($query) use ($id) {
+            $query->where('category_id', $id);
+        })->get();
+    
+        // Fetch categories related to the searched products
+        $categories = Category::where('id', $id)->get();
+    
+        $user = Auth::user();
+        
+        return response()->json([
+            "user" => $user,
+            "categories" => $categories,
+            "products" => $products
+        ]);
+    }
     public function delete(Product $product)
     {
         if ($product->prices) {
