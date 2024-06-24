@@ -45,7 +45,7 @@ class ProductController extends Controller
     }
     public function product_page(Request $request)
     {
-        $products = Product::with('prices')->with('site')->get();
+        $products = Product::with(['prices', 'site.category'])->get();
         $categories = Category::all();
         $user = Auth::user();
         return response()->json([
@@ -65,30 +65,58 @@ class ProductController extends Controller
             "products" => $products
         ]);
     }
+
+    public function search_product_mobile(Request $request)
+    {
+        $searchData = $request->search_data;
     
-   
-public function search(Request $request)
-{
-    $searchData = $request->query('search_data'); // Fetch search data from query parameter
-
-    $query = Product::query(); // Start building the query
-
-    if ($searchData) {
-        // Filter products where the name resembles the search data
-        $query->where('name', 'like', '%' . $searchData . '%');
+        // Assuming your logic to filter products based on search data
+        $products = Product::where('name', 'like', '%' . $searchData . '%')
+                            ->with('prices')
+                            ->with('site')
+                            ->get();
+    
+        // Fetch categories related to the searched products
+        $categories = Category::whereHas('sites.products', function ($query) use ($searchData) {
+                                $query->where('name', 'like', '%' . $searchData . '%');
+                            })
+                            ->with('sites.products')
+                            ->get();
+    
+        $user = Auth::user();
+        
+        return response()->json([
+            "user" => $user,
+            "categories" => $categories,
+            "products" => $products
+        ]);
     }
-
-    $products = $query->get(); // Execute the query and get the results
-
-    // You can include additional data as needed, such as categories
-    $categories = Category::all();
-
-    // Return response as JSON
-    return response()->json([
-        'products' => $products,
-        'categories' => $categories,
-    ]);
-}
+    public function search_product_web(Request $request)
+    {
+        $searchData = $request->search_data;
+    
+        // Assuming your logic to filter products based on search data
+        $products = Product::where('name', 'like', '%' . $searchData . '%')
+                            ->with('prices')
+                            ->with('site')
+                            ->get();
+    
+        // Fetch categories related to the searched products
+        $categories = Category::whereHas('sites.products', function ($query) use ($searchData) {
+                                $query->where('name', 'like', '%' . $searchData . '%');
+                            })
+                            ->with('sites.products')
+                            ->get();
+    
+        $user = Auth::user();
+        
+        return response()->json([
+            "user" => $user,
+            "categories" => $categories,
+            "products" => $products
+        ]);
+    }
+    
     public function delete(Product $product)
     {
         if ($product->prices) {
