@@ -66,7 +66,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function search_product(Request $request)
+    public function search_products(Request $request)
     {
         $searchData = $request->search_data;
     
