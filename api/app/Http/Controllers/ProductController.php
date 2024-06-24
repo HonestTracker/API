@@ -118,9 +118,8 @@ class ProductController extends Controller
     public function filter_products(Request $request)
     {
         $id = $request->id;
-        if($id = "all")
+        if($id == "all")
         {
-            return 'test';
             $products = Product::with(['prices', 'site.category'])->get();
         }
         else
