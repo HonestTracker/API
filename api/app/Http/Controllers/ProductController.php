@@ -67,6 +67,7 @@ class ProductController extends Controller
     }
     public function product_page_single(Request $request)
     {
+        return response()->json($request->product);
         // Fetch product with its latest 3 prices per site and its site's category
         $product = Product::with([
                 'prices' => function ($query) {
