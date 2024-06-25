@@ -17,6 +17,8 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('register', [AuthController::class, 'register'])->name('register');
     Route::post('userdetails', [AuthController::class, 'user_details'])->name('userdetails');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::middleware('jwt.auth')->get('user', [AuthController::class, 'user'])->name('user');
+
 });
 Route::get('auth/google', [AuthController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
@@ -26,6 +28,7 @@ Route::group(['prefix' => 'mobile'], function ($router) {
     Route::group(['middleware' => 'api'], function ($router) {
         Route::middleware('jwt.auth')->get('home', [ProductController::class, 'homepage'])->name('home');
         Route::middleware('jwt.auth')->get('products', [ProductController::class, 'product_page'])->name('product_page');
+        Route::middleware('jwt.auth')->get('products/view', [ProductController::class, 'product_page_single'])->name('product_page_single');
         Route::middleware('jwt.auth')->get('products/search', [ProductController::class, 'search_products'])->name('search_products');
         Route::middleware('jwt.auth')->get('products/filter', [ProductController::class, 'filter_products'])->name('filter_products');
         Route::group(['prefix' => 'categories'], function ($router) {

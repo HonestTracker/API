@@ -93,6 +93,10 @@ class AuthController extends \Illuminate\Routing\Controller
             'expires_in' => auth('api')->factory()->setTTL(100 * 365 * 24 * 60),
         ]);
     }
+    public function user()
+    {
+        return auth()->user();
+    }
 
     //Functie voor het uitloggen van een ingelogde gebruiker
     public function logout(Request $request)

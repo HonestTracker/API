@@ -65,6 +65,39 @@ class ProductController extends Controller
             "products" => $products
         ]);
     }
+    public function product_page_single(Request $request)
+    {
+        // Fetch product with its latest 3 prices per site and its site's category
+        $product = Product::with([
+                'prices' => function ($query) {
+                    $query->orderByDesc('date')
+                          ->groupBy('site_id') // Group by site_id to get latest prices per site
+                          ->take(3);  // Limit to 3 latest prices per site
+                },
+                'site.category'
+            ])
+            ->where('id', $request->product->id)
+            ->firstOrFail(); // Assuming you are fetching a single product by its ID
+    
+        // Extract latest prices per site into an array with site names as keys
+        $latest_prices = [];
+        foreach ($product->prices as $price) {
+            $latest_prices[$price->site->site_name] = [
+                'price' => $price->price,
+                'date' => $price->date,
+                'change_percentage' => $price->change_percentage,
+            ];
+        }
+    
+        $user = Auth::user();
+    
+        return response()->json([
+            "user" => $user,
+            "latest_prices" => $latest_prices,
+            "site_category" => $product->site->category, // Assuming you want to send the site's category
+        ]);
+    }
+    
 
     public function search_products(Request $request)
     {
@@ -221,7 +254,15 @@ class ProductController extends Controller
                                 if ($product_check) {
                                     $action = "update";
                                     $product = Product::where('site_id', $site->id)->where('name', $title)->first();
-                                    $product->change_percentage = mt_rand(-1000, 1000) / 100;
+                                    $last_price = $product->prices()->orderBy('date', 'desc')->first();
+                                    if ($last_price) {
+                                        $last_recorded_price = $last_price->price;
+                                        $change_percentage = (($price - $last_recorded_price) / $last_recorded_price) * 100;
+                                    } else {
+                                        // No previous price recorded, set a default change percentage
+                                        $change_percentage = 0;
+                                    }
+                                    $product->change_percentage = $change_percentage;
                                     $product->current_price = $price;
                                     $product->update();
                                 } else {
@@ -229,7 +270,7 @@ class ProductController extends Controller
                                     $product = new Product;
                                     $product->name = $title;
                                     $product->site_id = $site->id;
-                                    $product->change_percentage = mt_rand(-1000, 1000) / 100;
+                                    $product->change_percentage = 0;
                                     $product->current_price = $price;
                                     $product->currency = "EUR";
                                     $product->url = "https://www.coolblue.nl" . $href;

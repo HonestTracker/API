@@ -30,4 +30,9 @@ class CategoryController extends Controller
         $category->update();
         return redirect('/admin/categories')->with('success', "Category updated!");
     }
+    public function delete_admin(Category $category)
+    {
+        foreach($category->products as $product)
+        return redirect('/admin/categories')->with('success', "Category updated!");
+    }
 }
