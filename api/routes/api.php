@@ -23,7 +23,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 Route::get('auth/google', [AuthController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [AuthController::class, 'handleGoogleCallback']);
 
-//Mobile route group
+
 Route::group(['prefix' => 'mobile'], function ($router) {
     Route::group(['middleware' => 'api'], function ($router) {
         Route::middleware('jwt.auth')->get('home', [ProductController::class, 'homepage'])->name('home');
