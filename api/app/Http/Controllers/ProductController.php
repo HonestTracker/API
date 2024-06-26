@@ -67,18 +67,11 @@ class ProductController extends Controller
     }
     public function product_page_single(Request $request)
     {
-        return response()->json($request->product);
-        // Fetch product with its latest 3 prices per site and its site's category
-        $product = Product::with([
-                'prices' => function ($query) {
-                    $query->orderByDesc('date')
-                          ->groupBy('site_id') // Group by site_id to get latest prices per site
-                          ->take(3);  // Limit to 3 latest prices per site
-                },
-                'site.category'
-            ])
-            ->where('id', $request->product->id)
-            ->firstOrFail(); // Assuming you are fetching a single product by its ID
+        $product = Product::with('site.category')->where('id', $request->product_id)->first();
+    
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
     
         // Extract latest prices per site into an array with site names as keys
         $latest_prices = [];
@@ -95,10 +88,9 @@ class ProductController extends Controller
         return response()->json([
             "user" => $user,
             "latest_prices" => $latest_prices,
-            "site_category" => $product->site->category, // Assuming you want to send the site's category
+            "site_category" => $product->site->category, // The site's category
         ]);
-    }
-    
+    }    
 
     public function search_products(Request $request)
     {
