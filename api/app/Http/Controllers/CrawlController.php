@@ -18,27 +18,21 @@ class CrawlController extends Controller
         return "test";
     }
     public function crawl()
-{
-    $products = Product::all();
+    {
+        $products = Product::all();
 
-    foreach ($products as $product) {
-        $client = new Client();
+        foreach ($products as $product) {
+            $client = new Client();
 
-        try {
-            $response = $client->request('GET', $product->url);
-            $html = $response->getBody()->getContents();
-            $crawler = new Crawler($html);
-            $date = Carbon::now();
+            try {
+                $response = $client->request('GET', $product->url);
+                $html = $response->getBody()->getContents();
+                $crawler = new Crawler($html);
+                $date = Carbon::now();
 
-            // Initialize variables for cheapest price and corresponding product_price
-            $cheapestPrice = PHP_INT_MAX;
-            $cheapestProductPrice = null;
+                $price = null; // Initialize price
 
-            // Loop through each site associated with the product
-            foreach ($product->site as $site) {
-                $price = null;
-
-                if ($site->site_name == "bol.com") {
+                if ($product->site->site_name == "bol.com") {
                     $raw_price = $crawler->filter('span[data-test="price"]')->text();
                     $raw_fraction = $crawler->filter('sup[data-test="price-fraction"]')->text();
 
@@ -48,54 +42,48 @@ class CrawlController extends Controller
                         $price = preg_replace('/[- ]/', '', $raw_price);
                     }
 
-                } elseif ($site->site_name == "coolblue.nl") {
+                } elseif ($product->site->site_name == "coolblue.nl") {
                     $raw_price = $crawler->filter('strong.sales-price__current.js-sales-price-current')->text();
                     $price = preg_replace('/[^\d]/', '', $raw_price);
                 }
 
                 if ($price !== null) {
-                    // Save product price for this site
+                    // Calculate change percentage
+                    $last_price = $product->prices()->orderBy('date', 'desc')->first();
+                    if ($last_price) {
+                        $last_recorded_price = $last_price->price;
+                        $change_percentage = (($price - $last_recorded_price) / $last_recorded_price) * 100;
+                    } else {
+                        // No previous price recorded, set a default change percentage
+                        $change_percentage = 0;
+                    }
+
+                    // Save new product price
                     $productPrice = new ProductPrice();
-                    $productPrice->site_id = $site->id;
+                    $productPrice->site_id = $product->site->id;
                     $productPrice->price = $price;
                     $productPrice->date = $date;
                     $productPrice->product_id = $product->id;
+                    $productPrice->change_percentage = $change_percentage;
                     $productPrice->save();
 
-                    // Determine if this price is the cheapest
-                    if ($price < $cheapestPrice) {
-                        $cheapestPrice = $price;
-                        $cheapestProductPrice = $productPrice;
-                    }
-                }
-            }
-
-            if ($cheapestProductPrice !== null) {
-                // Calculate change percentage based on the last recorded price for this site
-                $last_price = $product->prices()->where('site_id', $cheapestProductPrice->site_id)->orderBy('date', 'desc')->first();
-                if ($last_price) {
-                    $last_recorded_price = $last_price->price;
-                    $change_percentage = (($cheapestPrice - $last_recorded_price) / $last_recorded_price) * 100;
+                    // Update product's current price and change percentage
+                    $product->current_price = $price;
+                    $product->change_percentage = $change_percentage;
+                    $product->update();
                 } else {
-                    // No previous price recorded, set a default change percentage
-                    $change_percentage = 0;
+                    // Handle case where price extraction failed
+                    // Log or skip the product update
+                    continue;
                 }
 
-                // Update product with cheapest price and corresponding product_price ID
-                $product->current_price = $cheapestPrice;
-                $product->current_price_id = $cheapestProductPrice->id;
-                $product->change_percentage = $change_percentage;
-                $product->update();
+            } catch (\Exception $e) {
+                // Handle GuzzleHttp exceptions (like 503 Service Temporarily Unavailable)
+                // You can log the error or handle it based on your application's requirements
+                \Log::error('Error crawling ' . $product->url . ': ' . $e->getMessage());
+                continue; // Skip this product and move to the next one
             }
-
-        } catch (\Exception $e) {
-            // Handle GuzzleHttp exceptions (like 503 Service Temporarily Unavailable)
-            \Log::error('Error crawling ' . $product->url . ': ' . $e->getMessage());
-            continue; // Skip this product and move to the next one
         }
+        return redirect()->back()->with('success', 'Prices crawled successfully!');
     }
-
-    return redirect()->back()->with('success', 'Prices crawled successfully!');
-}
-
 }
