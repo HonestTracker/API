@@ -27,7 +27,7 @@ return new class extends Migration {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('site_id');
-            $table->unsighnedBigInteger('current_price_id');
+            $table->unsignedBigInteger('current_price_id');
             $table->string('name');
             $table->longText('url');
             $table->decimal('current_price');
@@ -36,17 +36,7 @@ return new class extends Migration {
             $table->string('picture_url')->nullable();
             $table->timestamps();
             $table->foreign('site_id')->references('id')->on('category_sites');
-            $table->foreign('current_price_id')->references('id')->on('product_prices');
-        });
-        Schema::create('comments', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('product_id');
-            $table->string('text');
-            $table->decimal('stars');
-            $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('product_id')->references('id')->on('products');
+
         });
         Schema::create('product_prices', function (Blueprint $table) {
             $table->id();
@@ -58,6 +48,19 @@ return new class extends Migration {
             $table->timestamps();
             $table->foreign('product_id')->references('id')->on('products');
             $table->foreign('site_id')->references('id')->on('category_sites');
+        });
+        Schema::table('products', function (Blueprint $table) {
+            $table->foreign('current_price_id')->references('id')->on('product_prices');
+        });
+        Schema::create('comments', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('product_id');
+            $table->string('text');
+            $table->decimal('stars');
+            $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('product_id')->references('id')->on('products');
         });
     }
 
