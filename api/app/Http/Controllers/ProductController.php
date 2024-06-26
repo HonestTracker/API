@@ -118,6 +118,7 @@ class ProductController extends Controller
                     'change_percentage' => $history->change_percentage,
                 ];
             }
+            $lowest_site = CategorySite::where('id', $lowest_price_site_id)->first();
         }
     
         $user = Auth::user();
@@ -125,7 +126,10 @@ class ProductController extends Controller
         return response()->json([
             "user" => $user,
             "latest_prices" => $latest_prices,
-            "price_history" => $price_histories, // Note the singular key here
+            "lowest_site" => [
+                "site_name" => $lowest_site->site_name,
+                "price_history" => $price_histories, // Note the singular key here
+            ],
             "lowest_price" => $lowest_price,
             "site_category" => $product->site->category,
         ]);
