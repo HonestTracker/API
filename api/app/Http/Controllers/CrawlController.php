@@ -20,36 +20,36 @@ class CrawlController extends Controller
     public function crawl()
     {
         $products = Product::all();
-
+    
         foreach ($products as $product) {
             $client = new Client();
-
+    
             try {
                 $response = $client->request('GET', $product->url);
                 $html = $response->getBody()->getContents();
                 $crawler = new Crawler($html);
                 $date = Carbon::now();
-
+    
                 $price = null; // Initialize price
-
+    
                 if ($product->site->site_name == "bol.com") {
                     $raw_price = $crawler->filter('span[data-test="price"]')->text();
                     $raw_fraction = $crawler->filter('sup[data-test="price-fraction"]')->text();
-
+    
                     if ($raw_fraction !== "-") {
                         $price = preg_replace('/ /', '.', $raw_price);
                     } else {
                         $price = preg_replace('/[- ]/', '', $raw_price);
                     }
-
+    
                 } elseif ($product->site->site_name == "coolblue.nl") {
                     $raw_price = $crawler->filter('strong.sales-price__current.js-sales-price-current')->text();
                     $price = preg_replace('/[^\d]/', '', $raw_price);
                 }
-
+    
                 if ($price !== null) {
                     // Calculate change percentage
-                    $last_price = $product->prices()->orderBy('date', 'desc')->first();
+                    $last_price = $product->prices()->where('site_id', $product->site->id)->orderBy('date', 'desc')->first();
                     if ($last_price) {
                         $last_recorded_price = $last_price->price;
                         $change_percentage = (($price - $last_recorded_price) / $last_recorded_price) * 100;
@@ -57,7 +57,7 @@ class CrawlController extends Controller
                         // No previous price recorded, set a default change percentage
                         $change_percentage = 0;
                     }
-
+    
                     // Save new product price
                     $productPrice = new ProductPrice();
                     $productPrice->site_id = $product->site->id;
@@ -66,17 +66,18 @@ class CrawlController extends Controller
                     $productPrice->product_id = $product->id;
                     $productPrice->change_percentage = $change_percentage;
                     $productPrice->save();
-
-                    // Update product's current price and change percentage
+    
+                    // Update product's current price, change percentage, and current price ID
                     $product->current_price = $price;
                     $product->change_percentage = $change_percentage;
+                    $product->current_price_id = $productPrice->id;
                     $product->update();
                 } else {
                     // Handle case where price extraction failed
                     // Log or skip the product update
                     continue;
                 }
-
+    
             } catch (\Exception $e) {
                 // Handle GuzzleHttp exceptions (like 503 Service Temporarily Unavailable)
                 // You can log the error or handle it based on your application's requirements

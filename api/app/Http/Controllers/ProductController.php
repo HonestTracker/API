@@ -74,61 +74,11 @@ class ProductController extends Controller
             return response()->json(['error' => 'Product not found'], 404);
         }
     
-        $latest_prices = [];
-        $lowest_site = null;
-        $price_histories = [];
-        $lowest_price_site_id = null;
-    
-        // Find the lowest price and collect latest prices
-        foreach ($product->prices as $price) {
-            $site_name = $price->site->site_name;
-    
-            // Update latest prices array
-            if (!isset($latest_prices[$site_name]) || $latest_prices[$site_name]['date'] < $price->date) {
-                $latest_prices[$site_name] = [
-                    'price' => $price->price,
-                    'date' => $price->date,
-                    'change_percentage' => $price->change_percentage,
-                    'site' => $price->site,
-                ];
-            }
-
-            if (is_null($lowest_price) || $price->price < $lowest_price['price']) {
-                $lowest_price = [
-                    'price' => $price->price,
-                    'site_name' => $site_name,
-                    'date' => $price->date,
-                    'change_percentage' => $price->change_percentage,
-                ];
-                $lowest_price_site_id = $price->site_id;
-            }
-        }
-    
-        if ($lowest_price_site_id) {
-            $lowest_price_history = ProductPrice::where('product_id', $product->id)
-                                                 ->where('site_id', $lowest_price_site_id)
-                                                 ->orderBy('date', 'asc')
-                                                 ->get();
-            foreach ($lowest_price_history as $history) {
-                $price_histories[] = [
-                    'price' => $history->price,
-                    'date' => $history->date,
-                    'change_percentage' => $history->change_percentage,
-                ];
-            }
-            $lowest_site = CategorySite::where('id', $lowest_price_site_id)->first();
-        }
-    
         $user = Auth::user();
-    
+
         return response()->json([
             "user" => $user,
-            "latest_prices" => $latest_prices,
-            "lowest_site" => [
-                "site_name" => $lowest_site->site_name,
-                "price_history" => $price_histories, // Note the singular key here
-            ],
-            "site_category" => $product->site->category,
+          
         ]);
     } 
 
@@ -215,6 +165,7 @@ class ProductController extends Controller
     public function fetch_all_products()
     {
         $sites = CategorySite::all();
+    
         foreach ($sites as $site) {
             $url = $site->url;
             $site_name = $site->site_name;
@@ -222,34 +173,90 @@ class ProductController extends Controller
             $response = $client->request('GET', $url);
             $html = $response->getBody()->getContents();
             $crawler = new Crawler($html);
+            
             if ($site_name == "bol.com") {
                 $products = $crawler->filter('li.product-item--row');
-            }
-            if ($site_name == "coolblue.nl") {
+            } elseif ($site_name == "coolblue.nl") {
                 $products = $crawler->filter('div.product-card');
+            } else {
+                continue; // Skip unknown sites or handle differently
             }
-            $products = $products->slice(0, 5);
+            
+            $products = $products->slice(0, 5); // Limit to first 5 products
+            
             $ids = [];
-            $products->each(
-                function (Crawler $product, $i) use (&$ids, $url, $site, $crawler) {
-                    if ($site->site_name == "bol.com") {
-                        $dataId = $product->attr('data-id');
-                        if ($dataId) {
-                            $link = $product->filter('a')->attr('href');
-                            $title = $product->filter('a.product-title')->text();
+    
+            $products->each(function (Crawler $product, $i) use (&$ids, $site, $site_name) {
+                if ($site_name == "bol.com") {
+                    $dataId = $product->attr('data-id');
+                    if ($dataId) {
+                        $link = $product->filter('a')->attr('href');
+                        $title = $product->filter('a.product-title')->text();
+                        $title = explode(' - ', $title, 2)[0];
+                        $raw_price = $product->filter('span[data-test="price"]')->text();
+                        $raw_fraction = $product->filter('sup[data-test="price-fraction"]')->text();
+                        
+                        if ($raw_fraction !== "-") {
+                            $price = preg_replace('/ /', '.', $raw_price);
+                        } else {
+                            $price = preg_replace('/[- ]/', '', $raw_price);
+                        }
+                        
+                        $product_check = Product::where('site_id', $site->id)->where('name', $title)->exists();
+                        
+                        if ($product_check) {
+                            $action = "update";
+                            $product = Product::where('site_id', $site->id)->where('name', $title)->first();
+                            $product->current_price = $price;
+                            $product->update();
+                        } else {
+                            $action = "new";
+                            $product = new Product;
+                            $product->name = $title;
+                            $product->site_id = $site->id;
+                            $product->change_percentage = mt_rand(-1000, 1000) / 100;
+                            $product->current_price = $price;
+                            $product->url = "https://www.bol.com" . $link;
+                            $product->currency = "EUR";
+                            $product->save();
+                        }
+                        
+                        $ids[] = [
+                            "data_id" => $dataId,
+                            "site_name" => "https://www.bol.com" . $link,
+                            "name" => $title,
+                            "price" => $price,
+                            "action" => $action,
+                        ];
+                    }
+                } elseif ($site_name == "coolblue.nl") {
+                    $ahref = $product->filter('div.product-card__title');
+                    if ($ahref->count() > 0) {
+                        $href = $ahref->filter('a.link')->attr('href');
+                        if (preg_match('/product\/(\d+)\//', $href, $matches)) {
+                            $dataId = $matches[1];
+                        }
+                        if (!empty($dataId)) {
+                            $title = $ahref->filter('a.link')->attr('title');
                             $title = explode(' - ', $title, 2)[0];
-                            $raw_price = $product->filter('span[data-test="price"]')->text();
-                            $raw_fraction = $product->filter('sup[data-test="price-fraction"]')->text();
-                            if ($raw_fraction !== "-") {
-                                $price = preg_replace('/ /', '.', $raw_price);
-                            } else {
-                                $price = preg_replace('/[- ]/', '', $raw_price);
-                            }
+                            $raw_price = $product->filter('strong.sales-price__current.js-sales-price-current')->text();
+                            $price = preg_replace('/[^\d]/', '', $raw_price);
                             $product_check = Product::where('site_id', $site->id)->where('name', $title)->exists();
+                            
                             if ($product_check) {
                                 $action = "update";
                                 $product = Product::where('site_id', $site->id)->where('name', $title)->first();
-                                $product->change_percentage = mt_rand(-1000, 1000) / 100;
+                                $last_price = $product->prices()->orderBy('date', 'desc')->first();
+                                
+                                if ($last_price) {
+                                    $last_recorded_price = $last_price->price;
+                                    $change_percentage = (($price - $last_recorded_price) / $last_recorded_price) * 100;
+                                } else {
+                                    // No previous price recorded, set a default change percentage
+                                    $change_percentage = 0;
+                                }
+                                
+                                $product->change_percentage = $change_percentage;
                                 $product->current_price = $price;
                                 $product->update();
                             } else {
@@ -257,59 +264,13 @@ class ProductController extends Controller
                                 $product = new Product;
                                 $product->name = $title;
                                 $product->site_id = $site->id;
-                                $product->change_percentage = mt_rand(-1000, 1000) / 100;
+                                $product->change_percentage = 0;
                                 $product->current_price = $price;
-                                $product->url = "https://www.bol.com" . $link;
                                 $product->currency = "EUR";
+                                $product->url = "https://www.coolblue.nl" . $href;
                                 $product->save();
                             }
-                            $ids[] = [
-                                "data_id" => $dataId,
-                                "site_name" => "https://www.bol.com" . $link,
-                                "name" => $title,
-                                "price" => $price,
-                                "action" => $action,
-                            ];
-                        }
-                    } elseif ($site->site_name == "coolblue.nl") {
-                        $ahref = $product->filter('div.product-card__title');
-                        if ($ahref->count() > 0) {
-                            $href = $ahref->filter('a.link')->attr('href');
-                            if (preg_match('/product\/(\d+)\//', $href, $matches)) {
-                                $dataId = $matches[1];
-                            }
-                            if (!empty($dataId)) {
-                                $title = $ahref->filter('a.link')->attr('title');
-                                $title = explode(' - ', $title, 2)[0];
-                                $raw_price = $product->filter('strong.sales-price__current.js-sales-price-current')->text();
-                                $price = preg_replace('/[^\d]/', '', $raw_price);
-                                $product_check = Product::where('site_id', $site->id)->where('name', $title)->exists();
-                                if ($product_check) {
-                                    $action = "update";
-                                    $product = Product::where('site_id', $site->id)->where('name', $title)->first();
-                                    $last_price = $product->prices()->orderBy('date', 'desc')->first();
-                                    if ($last_price) {
-                                        $last_recorded_price = $last_price->price;
-                                        $change_percentage = (($price - $last_recorded_price) / $last_recorded_price) * 100;
-                                    } else {
-                                        // No previous price recorded, set a default change percentage
-                                        $change_percentage = 0;
-                                    }
-                                    $product->change_percentage = $change_percentage;
-                                    $product->current_price = $price;
-                                    $product->update();
-                                } else {
-                                    $action = "new";
-                                    $product = new Product;
-                                    $product->name = $title;
-                                    $product->site_id = $site->id;
-                                    $product->change_percentage = 0;
-                                    $product->current_price = $price;
-                                    $product->currency = "EUR";
-                                    $product->url = "https://www.coolblue.nl" . $href;
-                                    $product->save();
-                                }
-                            }
+                            
                             $ids[] = [
                                 "data_id" => $dataId,
                                 "site_name" => "https://www.coolblue.com" . $href,
@@ -320,10 +281,13 @@ class ProductController extends Controller
                         }
                     }
                 }
-            );
+            });
+    
             $site->last_crawled = now();
             $site->update();
         }
+    
         return redirect()->back()->with('success', "Products fetched!");
     }
+    
 }

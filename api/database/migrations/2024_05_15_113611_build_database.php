@@ -27,6 +27,7 @@ return new class extends Migration {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('site_id');
+            $table->unsighnedBigInteger('current_price_id');
             $table->string('name');
             $table->longText('url');
             $table->decimal('current_price');
@@ -35,6 +36,7 @@ return new class extends Migration {
             $table->string('picture_url')->nullable();
             $table->timestamps();
             $table->foreign('site_id')->references('id')->on('category_sites');
+            $table->foreign('current_price_id')->references('id')->on('product_prices');
         });
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
@@ -74,6 +76,7 @@ return new class extends Migration {
         });
         Schema::table('products', function (Blueprint $table) {
             $table->dropForeign('products_site_id_foreign');
+            $table->dropForeign('products_current_price_id_foreign');
         });
         Schema::table('category_sites', function (Blueprint $table) {
             $table->dropForeign('category_sites_category_id_foreign');

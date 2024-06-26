@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Product extends Model
 {
@@ -16,6 +17,7 @@ class Product extends Model
         'name',
         'url',
         'current_price',
+        'current_price_id',
         'change_percentage',
         'currency',
         'picture_url',
@@ -27,5 +29,9 @@ class Product extends Model
     public function prices(): HasMany
     {
         return $this->HasMany(ProductPrice::class);
+    }
+    public function current_price(): HasOne
+    {
+        return $this->hasOne(ProductPrice::class);
     }
 }
