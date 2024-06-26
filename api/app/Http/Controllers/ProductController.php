@@ -75,7 +75,7 @@ class ProductController extends Controller
         }
     
         $latest_prices = [];
-        $lowest_price = null;
+        $lowest_site = null;
         $price_histories = [];
         $lowest_price_site_id = null;
     
@@ -92,8 +92,7 @@ class ProductController extends Controller
                     'site' => $price->site,
                 ];
             }
-    
-            // Update lowest price
+
             if (is_null($lowest_price) || $price->price < $lowest_price['price']) {
                 $lowest_price = [
                     'price' => $price->price,
@@ -105,7 +104,6 @@ class ProductController extends Controller
             }
         }
     
-        // Collect price history for the site with the lowest price
         if ($lowest_price_site_id) {
             $lowest_price_history = ProductPrice::where('product_id', $product->id)
                                                  ->where('site_id', $lowest_price_site_id)
@@ -130,7 +128,6 @@ class ProductController extends Controller
                 "site_name" => $lowest_site->site_name,
                 "price_history" => $price_histories, // Note the singular key here
             ],
-            "lowest_price" => $lowest_price,
             "site_category" => $product->site->category,
         ]);
     } 
