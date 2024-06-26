@@ -68,7 +68,6 @@ class ProductController extends Controller
     }
     public function product_page_single(Request $request)
     {
-        return response()->json($request->product_id);
         $product = Product::with('site.category')->where('id', $request->product_id)->first();
     
         if (!$product) {
@@ -79,7 +78,7 @@ class ProductController extends Controller
 
         return response()->json([
             "user" => $user,
-          
+            "product" => $product,
         ]);
     } 
 
