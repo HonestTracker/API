@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\CategorySite;
 use App\Models\Product;
+use App\Models\ProductPrice;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -73,14 +74,50 @@ class ProductController extends Controller
             return response()->json(['error' => 'Product not found'], 404);
         }
     
-        // Extract latest prices per site into an array with site names as keys
         $latest_prices = [];
+        $lowest_price = null;
+        $price_histories = [];
+        $lowest_price_site_id = null;
+    
+        // Find the lowest price and collect latest prices
         foreach ($product->prices as $price) {
-            $latest_prices[$price->site->site_name] = [
-                'price' => $price->price,
-                'date' => $price->date,
-                'change_percentage' => $price->change_percentage,
-            ];
+            $site_name = $price->site->site_name;
+    
+            // Update latest prices array
+            if (!isset($latest_prices[$site_name]) || $latest_prices[$site_name]['date'] < $price->date) {
+                $latest_prices[$site_name] = [
+                    'price' => $price->price,
+                    'date' => $price->date,
+                    'change_percentage' => $price->change_percentage,
+                    'site' => $price->site,
+                ];
+            }
+    
+            // Update lowest price
+            if (is_null($lowest_price) || $price->price < $lowest_price['price']) {
+                $lowest_price = [
+                    'price' => $price->price,
+                    'site_name' => $site_name,
+                    'date' => $price->date,
+                    'change_percentage' => $price->change_percentage,
+                ];
+                $lowest_price_site_id = $price->site_id;
+            }
+        }
+    
+        // Collect price history for the site with the lowest price
+        if ($lowest_price_site_id) {
+            $lowest_price_history = ProductPrice::where('product_id', $product->id)
+                                                 ->where('site_id', $lowest_price_site_id)
+                                                 ->orderBy('date', 'asc')
+                                                 ->get();
+            foreach ($lowest_price_history as $history) {
+                $price_histories[] = [
+                    'price' => $history->price,
+                    'date' => $history->date,
+                    'change_percentage' => $history->change_percentage,
+                ];
+            }
         }
     
         $user = Auth::user();
@@ -88,9 +125,11 @@ class ProductController extends Controller
         return response()->json([
             "user" => $user,
             "latest_prices" => $latest_prices,
-            "site_category" => $product->site->category, // The site's category
+            "price_history" => $price_histories, // Note the singular key here
+            "lowest_price" => $lowest_price,
+            "site_category" => $product->site->category,
         ]);
-    }    
+    } 
 
     public function search_products(Request $request)
     {
