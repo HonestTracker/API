@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Socialite\Facades\Socialite;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -79,23 +80,56 @@ class AuthController extends \Illuminate\Routing\Controller
     }
     public function user_details(Request $request)
     {
-        $user = User::where('id', $request->user_id)->first();
-        $user->name = $request->name;
-        $user->update();
-        $credentials = ['email' => $user->email, 'password' => $request->password];
+        // Validate the request input, including the image file
+        $request->validate([
+            'picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // adjust max size as needed
+            'name' => 'required|string|max:255',
+            'user_id' => 'required|integer',
+            'password' => 'required|string',
+        ]);
+    
+        // Get the authenticated user
+        $user = auth()->user();
+    
+        // Create a folder path based on the user's ID or username
+        $folder = 'public/images/users/' . $user->id; // You can use $user->username if preferred
+    
+        // Store the file in the specified folder within the 'public' disk
+        $path = $request->file('picture')->store($folder);
+    
+        // Generate a URL for accessing the stored image
+        $url = Storage::url($path);
+    
+        // Find the user by the provided user_id
+        $userToUpdate = User::find($request->user_id);
+    
+        // Update user's profile picture path and name in the database
+        $userToUpdate->picture_url = $url; // Storing the URL instead of the path
+        $userToUpdate->name = $request->name;
+        $userToUpdate->update();
+    
+        // Attempt to authenticate with the provided credentials
+        $credentials = ['email' => $userToUpdate->email, 'password' => $request->password];
         if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
+    
+        // Generate the token with a long TTL
         $token = auth('api')->setTTL(100 * 365 * 24 * 60)->attempt($credentials);
+    
+        // Return the response with the token information
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->setTTL(100 * 365 * 24 * 60),
+            'expires_in' => auth('api')->factory()->getTTL() * 60,
         ]);
     }
+    
     public function user()
     {
-        return auth()->user();
+        return response()->json([
+            "user" => auth()->user(),
+        ]);
     }
 
     //Functie voor het uitloggen van een ingelogde gebruiker
