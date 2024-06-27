@@ -92,10 +92,10 @@ class AuthController extends \Illuminate\Routing\Controller
         $user = User::where("id", $request->user_id)->first();
     
         // Create a folder path based on the user's ID or username
-        $folder = 'public/images/users/' . $user->id; // You can use $user->username if preferred
-    
-        // Store the file in the specified folder within the 'public' disk
-        $path = $request->file('picture')->store($folder);
+        $folder = 'users/' . $user->id;
+
+    // Store the file in the specified folder within the 'public' disk
+    $path = $request->file('picture')->store($folder, 'public');
     
         // Generate a URL for accessing the stored image
         $url = Storage::url($path);
