@@ -89,7 +89,7 @@ class AuthController extends \Illuminate\Routing\Controller
         ]);
     
         // Get the authenticated user
-        $user = auth()->user();
+        $user = User::where("id", $request->user_id)->first();
     
         // Create a folder path based on the user's ID or username
         $folder = 'public/images/users/' . $user->id; // You can use $user->username if preferred
