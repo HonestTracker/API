@@ -133,7 +133,14 @@ class AuthController extends \Illuminate\Routing\Controller
     }
     public function edit(Request $request)
     {
-        $user = User::findOrFail($request->user_id);
+        $request->validate([
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // adjust max size as needed
+            'name' => 'nullable|string|max:255',
+            'user_id' => 'required|integer',
+            'email' => 'nullable|email',,
+        ]);
+        $user = auth()->user();
+        return response()->json($user);
         if ($request->name !== null) {
             $user->name = $request->name;
         }
