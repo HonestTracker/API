@@ -133,6 +133,7 @@ class AuthController extends \Illuminate\Routing\Controller
     }
     public function edit(Request $request)
     {
+        return response()->json("tst");
        return response()->json($request->all());
     }
 
