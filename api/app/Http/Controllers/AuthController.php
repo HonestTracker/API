@@ -87,36 +87,36 @@ class AuthController extends \Illuminate\Routing\Controller
             'user_id' => 'required|integer',
             'password' => 'required|string',
         ]);
-    
+
         // Get the authenticated user
         $user = User::where("id", $request->user_id)->first();
-    
+
         // Create a folder path based on the user's ID or username
         $folder = 'users/' . $user->id;
 
-    // Store the file in the specified folder within the 'public' disk
-    $path = $request->file('picture')->store($folder, 'public');
-    
+        // Store the file in the specified folder within the 'public' disk
+        $path = $request->file('picture')->store($folder, 'public');
+
         // Generate a URL for accessing the stored image
         $url = Storage::url($path);
-    
+
         // Find the user by the provided user_id
         $userToUpdate = User::find($request->user_id);
-    
+
         // Update user's profile picture path and name in the database
         $userToUpdate->picture_url = $url; // Storing the URL instead of the path
         $userToUpdate->name = $request->name;
         $userToUpdate->update();
-    
+
         // Attempt to authenticate with the provided credentials
         $credentials = ['email' => $userToUpdate->email, 'password' => $request->password];
         if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-    
+
         // Generate the token with a long TTL
         $token = auth('api')->setTTL(100 * 365 * 24 * 60)->attempt($credentials);
-    
+
         // Return the response with the token information
         return response()->json([
             'access_token' => $token,
@@ -124,7 +124,7 @@ class AuthController extends \Illuminate\Routing\Controller
             'expires_in' => auth('api')->factory()->getTTL() * 60,
         ]);
     }
-    
+
     public function user()
     {
         return response()->json([
@@ -133,7 +133,19 @@ class AuthController extends \Illuminate\Routing\Controller
     }
     public function edit(Request $request)
     {
-       
+        $user = User::findOrFail($request->user_id);
+        if ($request->name !== null) {
+            $user->name = $request->name;
+        }
+        if ($request->email !== null) {
+            $user->email = $request->email;
+        }
+        if ($request->hasFile('picture')) {
+            $picture = $request->file('picture');
+            $picturePath = $picture->store('profile_pictures', 'public'); // Store the image in storage/app/public/profile_pictures
+            $user->picture_url = $picturePath;
+        }
+        $user->update();
     }
 
     //Functie voor het uitloggen van een ingelogde gebruiker
