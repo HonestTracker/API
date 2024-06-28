@@ -133,8 +133,7 @@ class AuthController extends \Illuminate\Routing\Controller
     }
     public function edit(Request $request)
     {
-        return response()->json("tst");
-       return response()->json($request->all());
+       return response()->json($request->name);
     }
 
     //Functie voor het uitloggen van een ingelogde gebruiker
