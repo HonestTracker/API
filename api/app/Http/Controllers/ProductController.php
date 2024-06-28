@@ -28,7 +28,7 @@ class ProductController extends Controller
     }
     public function homepage_web(Request $request)
     {
-        $featured_product = Product::inRandomOrder()->with('site', 'prices.site')->first();
+        $featured_product = Product::inRandomOrder()->with(['prices', 'site.category'])->first();
         $featured_categories = Category::inRandomOrder()->take(3)->get();
         // Get the latest 5 products with a positive change_percentage (latest rises)
         $latest_rise_products = Product::where('change_percentage', '>', 0)->with('site')->latest('updated_at')->take(5)->get();
