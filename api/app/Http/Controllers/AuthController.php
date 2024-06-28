@@ -131,6 +131,10 @@ class AuthController extends \Illuminate\Routing\Controller
             "user" => auth()->user(),
         ]);
     }
+    public function edit(Request $request)
+    {
+       return response()->json($request->all());
+    }
 
     //Functie voor het uitloggen van een ingelogde gebruiker
     public function logout(Request $request)
