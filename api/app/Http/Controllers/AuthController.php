@@ -137,7 +137,7 @@ class AuthController extends \Illuminate\Routing\Controller
             'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // adjust max size as needed
             'name' => 'nullable|string|max:255',
             'user_id' => 'required|integer',
-            'email' => 'nullable|email',,
+            'email' => 'nullable|email',
         ]);
         $user = auth()->user();
         return response()->json($user);
