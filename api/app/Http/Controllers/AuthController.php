@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Laravel\Socialite\Facades\Socialite;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -87,36 +88,36 @@ class AuthController extends \Illuminate\Routing\Controller
             'user_id' => 'required|integer',
             'password' => 'required|string',
         ]);
-    
+
         // Get the authenticated user
         $user = User::where("id", $request->user_id)->first();
-    
+
         // Create a folder path based on the user's ID or username
         $folder = 'users/' . $user->id;
 
-    // Store the file in the specified folder within the 'public' disk
-    $path = $request->file('picture')->store($folder, 'public');
-    
+        // Store the file in the specified folder within the 'public' disk
+        $path = $request->file('picture')->store($folder, 'public');
+
         // Generate a URL for accessing the stored image
         $url = Storage::url($path);
-    
+
         // Find the user by the provided user_id
         $userToUpdate = User::find($request->user_id);
-    
+
         // Update user's profile picture path and name in the database
         $userToUpdate->picture_url = $url; // Storing the URL instead of the path
         $userToUpdate->name = $request->name;
         $userToUpdate->update();
-    
+
         // Attempt to authenticate with the provided credentials
         $credentials = ['email' => $userToUpdate->email, 'password' => $request->password];
         if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-    
+
         // Generate the token with a long TTL
         $token = auth('api')->setTTL(100 * 365 * 24 * 60)->attempt($credentials);
-    
+
         // Return the response with the token information
         return response()->json([
             'access_token' => $token,
@@ -124,7 +125,7 @@ class AuthController extends \Illuminate\Routing\Controller
             'expires_in' => auth('api')->factory()->getTTL() * 60,
         ]);
     }
-    
+
     public function user()
     {
         return response()->json([
@@ -133,7 +134,48 @@ class AuthController extends \Illuminate\Routing\Controller
     }
     public function edit(Request $request)
     {
-       return response()->json($request->name);
+        // Validate incoming request
+        $validator = Validator::make($request->all(), [
+            'name' => 'nullable|string',
+            'email' => 'nullable|email',
+            'user_id' => 'required|exists:users,id',
+            'device' => 'nullable|string',
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Example validation for image upload
+        ]);
+
+        // Handle validation errors
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
+        try {
+            // Find the user by user_id
+            $user = User::findOrFail($request->user_id);
+
+            // Update user fields
+            $user->name = $request->name;
+            $user->email = $request->email;
+
+            // Handle profile picture upload if provided
+            if ($request->hasFile('picture')) {
+                $folder = 'users/' . $user->id;
+
+                // Store the file in the specified folder within the 'public' disk
+                $path = $request->file('picture')->store($folder, 'public');
+
+                // Generate a URL for accessing the stored image
+                $url = Storage::url($path);
+
+                // Find the user by the provided user_id
+                $userToUpdate = User::find($request->user_id);
+
+                // Update user's profile picture path and name in the database
+                $userToUpdate->picture_url = $url; // Storing the URL instead of the path
+            }
+
+            // Save the updated user
+            $user->save();
+        }
     }
 
     //Functie voor het uitloggen van een ingelogde gebruiker
