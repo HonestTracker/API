@@ -289,5 +289,22 @@ class ProductController extends Controller
     
         return redirect()->back()->with('success', "Products fetched!");
     }
+
+    public function getProductById($id)
+    {
+        $product = Product::with(['prices', 'site.category'])->find($id);
+    
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+    
+        $user = Auth::user();
+    
+        return response()->json([
+            'user' => $user,
+            'product' => $product,
+        ]);
+    }
+
     
 }
