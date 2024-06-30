@@ -41,10 +41,12 @@ class CrawlController extends Controller
                     } else {
                         $price = preg_replace('/[- ]/', '', $raw_price);
                     }
+                    $image_url = $product->filter('img[data-test="product-main-image"]')->attr('src');
 
                 } elseif ($product->site->site_name == "coolblue.nl") {
                     $raw_price = $crawler->filter('strong.sales-price__current.js-sales-price-current')->text();
                     $price = preg_replace('/[^\d]/', '', $raw_price);
+                    $image_url = $product->filter('img.product-media-gallery__item-image')->attr('src');
                 }
 
                 if ($price !== null) {
@@ -70,6 +72,7 @@ class CrawlController extends Controller
                     // Update product's current price and change percentage
                     $product->current_price = $price;
                     $product->change_percentage = $change_percentage;
+                    $product->picture_url = $image_url;
                     $product->update();
                 } else {
                     // Handle case where price extraction failed
