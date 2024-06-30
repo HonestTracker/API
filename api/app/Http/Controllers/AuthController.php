@@ -158,8 +158,9 @@ class AuthController extends \Illuminate\Routing\Controller
         $user->update();
         return response()->json($user);
     }
-    public function edit_password(EditPasswordRequest $request)
+    public function edit_password(Request $request)
     {
+        return response()->json($request->all());
         $user = auth()->user();
         $user->password = Hash::make($request->password);
         $user->update();
