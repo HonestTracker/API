@@ -141,10 +141,10 @@ class AuthController extends \Illuminate\Routing\Controller
         ]);
         $user = auth()->user();
         return response()->json($user);
-        if ($request->name) {
+        if ($request->name !== null) {
             $user->name = $request->name;
         }
-        if ($request->email) {
+        if ($request->email !== null) {
             $user->email = $request->email;
         }
         if ($request->hasFile('picture')) {
