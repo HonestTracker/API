@@ -25,7 +25,7 @@ class StoreCommentRequest extends FormRequest
     {
         return [
             'text' => 'required',
-            'stars' => 'required',
+            'stars' => 'required|integer|min:1',
         ];
     }
     
@@ -33,7 +33,7 @@ class StoreCommentRequest extends FormRequest
     {
         throw new HttpResponseException(response()->json([
             'errors' => $validator->errors(),
-            'status' => true
+            'status' => false // Adjusted to false based on expected behavior
         ], 422));
     }
 }
