@@ -350,7 +350,7 @@ class ProductController extends Controller
             'product' => $product,
         ]);
     }
-    public function about()
+    public function about_web()
     {
         return response()->json('test');
         $product_count = Product::count();
