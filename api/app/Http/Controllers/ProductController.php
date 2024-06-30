@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\CategorySite;
+use App\Models\Comment;
 use App\Models\Product;
 use App\Models\ProductPrice;
 use GuzzleHttp\Client;
@@ -341,10 +342,11 @@ class ProductController extends Controller
             ->get();
 
         $user = Auth::user();
-
+        $comments = Comment::where('product_id', $product->id)->orderBy('created_at', "desc")->get();
         return response()->json([
             'user' => $user,
             'similar_products' => $similar_products,
+            'comments' => $comments,
             'product' => $product,
         ]);
     }
