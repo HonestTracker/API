@@ -140,7 +140,7 @@ class AuthController extends \Illuminate\Routing\Controller
     {
         $user = auth()->user();
         $favorites = Favorite::where('user_id', $user->id)->orderBy('date_created', 'desc')->get();
-        $comments = Comment::where('user_id', $user->id)->orderBy('date_created', 'desc')->with('product')->get();
+        $comments = Comment::where('user_id', $user->id)->orderBy('date_created', 'desc')->get();
         return response()->json([
             "user" => $user,
             'favorites' => $favorites,
