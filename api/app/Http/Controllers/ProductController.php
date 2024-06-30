@@ -242,7 +242,16 @@ class ProductController extends Controller
                             $product = new Product;
                             $product->name = $title;
                             $product->site_id = $site->id;
-                            $product->change_percentage = mt_rand(-1000, 1000) / 100;
+                            $last_price = $product->prices()->orderBy('date', 'desc')->first();
+
+                                if ($last_price) {
+                                    $last_recorded_price = $last_price->price;
+                                    $change_percentage = (($price - $last_recorded_price) / $last_recorded_price) * 100;
+                                } else {
+                                    $change_percentage = 0;
+                                }
+
+                                $product->change_percentage = $change_percentage;
                             $product->current_price = $price;
                             $product->url = "https://www.bol.com" . $link;
                             $product->currency = "EUR";
