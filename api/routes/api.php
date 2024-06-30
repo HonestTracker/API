@@ -19,6 +19,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::middleware('jwt.auth')->get('user', [AuthController::class, 'user'])->name('user');
     Route::middleware('jwt.auth')->post('edit', [AuthController::class, 'edit'])->name('edit');
+    Route::middleware('jwt.auth')->post('edit/password', [AuthController::class, 'edit_password'])->name('password');
 
 });
 Route::get('auth/google', [AuthController::class, 'redirectToGoogle']);

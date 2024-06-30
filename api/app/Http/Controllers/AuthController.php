@@ -7,6 +7,7 @@ use App\Http\Requests\ApiLoginRequest;
 use App\Http\Requests\ApiRegisterRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\EditAccountRequest;
+use App\Http\Requests\EditPasswordRequest;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -157,7 +158,13 @@ class AuthController extends \Illuminate\Routing\Controller
         $user->update();
         return response()->json($user);
     }
-
+    public function edit_password(EditPasswordRequest $request)
+    {
+        $user = auth()->user();
+        $user->password = Hash::make($request->password);
+        $user->update();
+        return response()->json(['message' => 'Yo!']);
+    }
     //Functie voor het uitloggen van een ingelogde gebruiker
     public function logout(Request $request)
     {
