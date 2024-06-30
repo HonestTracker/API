@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ApiLoginRequest;
 use App\Http\Requests\ApiRegisterRequest;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\EditAccountRequest;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -131,14 +132,8 @@ class AuthController extends \Illuminate\Routing\Controller
             "user" => auth()->user(),
         ]);
     }
-    public function edit(Request $request)
+    public function edit(EditAccountRequest $request)
     {
-        $request->validate([
-            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // adjust max size as needed
-            'name' => 'nullable|string|max:255',
-            'user_id' => 'required|integer',
-            'email' => 'nullable|email',
-        ]);
         $user = auth()->user();
         if ($request->name !== null) {
             $user->name = $request->name;
