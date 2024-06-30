@@ -34,4 +34,8 @@ class Product extends Model
     {
         return $this->hasOne(ProductPrice::class);
     }
+    public function comments(): HasMany
+    {
+        return $this->HasMany(Comment::class);
+    }
 }
