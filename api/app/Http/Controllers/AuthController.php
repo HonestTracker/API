@@ -232,6 +232,7 @@ class AuthController extends \Illuminate\Routing\Controller
     }
     public function about()
     {
+        return response()->json('test');
         $product_count = Product::count();
         $user_count = User::count();
         $comment_count = Comment::count();
