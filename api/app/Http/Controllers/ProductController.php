@@ -278,6 +278,8 @@ class ProductController extends Controller
                             $title = explode(' - ', $title, 2)[0];
                             $raw_price = $product->filter('strong.sales-price__current.js-sales-price-current')->text();
                             $price = preg_replace('/[^\d]/', '', $raw_price);
+                            $image = $product->filter('img.product-media-gallery__item-image')->attr('src');
+                            $image_url = str_replace('max/500x500', 'full', $image);
                             $product_check = Product::where('site_id', $site->id)->where('name', $title)->exists();
 
                             if ($product_check) {
@@ -294,6 +296,7 @@ class ProductController extends Controller
 
                                 $product->change_percentage = $change_percentage;
                                 $product->current_price = $price;
+                                $product->picture_url = $image_url;
                                 $product->update();
                             } else {
                                 $action = "new";
@@ -304,6 +307,7 @@ class ProductController extends Controller
                                 $product->current_price = $price;
                                 $product->currency = "EUR";
                                 $product->url = "https://www.coolblue.nl" . $href;
+                                $product->picture_url = $image_url;
                                 $product->save();
                             }
 
