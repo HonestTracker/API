@@ -139,8 +139,16 @@ class AuthController extends \Illuminate\Routing\Controller
     public function profile()
     {
         $user = auth()->user();
+
+        // Check if user is authenticated
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+    
+        // Proceed with retrieving favorites and comments
         $favorites = Favorite::where('user_id', $user->id)->orderBy('date_created', 'desc')->get();
         $comments = Comment::where('user_id', $user->id)->orderBy('date_created', 'desc')->get();
+    
         return response()->json([
             "user" => $user,
             'favorites' => $favorites,
