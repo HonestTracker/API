@@ -133,6 +133,7 @@ class AuthController extends \Illuminate\Routing\Controller
     }
     public function edit(Request $request)
     {
+        return response()->json($request->all());
         $request->validate([
             'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // adjust max size as needed
             'name' => 'nullable|string|max:255',
@@ -140,7 +141,6 @@ class AuthController extends \Illuminate\Routing\Controller
             'email' => 'nullable|email',
         ]);
         $user = auth()->user();
-        return response()->json($request->all());
         if ($request->name !== null) {
             $user->name = $request->name;
         }
