@@ -41,12 +41,12 @@ class CrawlController extends Controller
                     } else {
                         $price = preg_replace('/[- ]/', '', $raw_price);
                     }
-                    $image_url = $product->filter('img[data-test="product-main-image"]')->attr('src');
+                    $image_url = $crawler->filter('img[data-test="product-main-image"]')->attr('src');
 
                 } elseif ($product->site->site_name == "coolblue.nl") {
                     $raw_price = $crawler->filter('strong.sales-price__current.js-sales-price-current')->text();
                     $price = preg_replace('/[^\d]/', '', $raw_price);
-                    $image_url = $product->filter('img.product-media-gallery__item-image')->attr('src');
+                    $image_url = $crawler->filter('img.product-media-gallery__item-image')->attr('src');
                 }
 
                 if ($price !== null) {
