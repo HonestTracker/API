@@ -19,6 +19,7 @@ class FavoriteController extends Controller
     }
     public function store(Request $request)
     {
+        return response()->json($request->all());
         $user = auth()->user();
         $product = Product::where('id', $request->product_id)->first();
         $favorite = new Favorite;
