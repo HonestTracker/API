@@ -42,7 +42,7 @@ Route::get('home', [ProductController::class, 'homepage_web'])->name('home_web')
 Route::get('products', [ProductController::class, 'product_page_web'])->name('product_page_web');
 Route::get('products/search', [ProductController::class, 'search_product_web'])->name('search_products_web');
 Route::post('products/filter', [ProductController::class, 'filter_products_web'])->name('filter_products_web');
-Route::get('products/{id}', [ProductController::class, 'getProductById'])->name('product_by_id');
+Route::get('products/{id}', [ProductController::class, 'get_product_by_id'])->name('product_by_id');
 Route::group(['prefix' => 'categories'], function ($router) {
 });
 

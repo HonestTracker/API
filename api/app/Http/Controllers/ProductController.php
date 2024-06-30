@@ -317,18 +317,19 @@ class ProductController extends Controller
         return redirect()->back()->with('success', "Products fetched!");
     }
 
-    public function getProductById($id)
+    public function get_product_by_id($id)
     {
         $product = Product::with(['prices', 'site.category'])->find($id);
 
         if (!$product) {
             return response()->json(['error' => 'Product not found'], 404);
         }
-
+        $similair_products = Product::where('site.category_id', $product->site->category_id)->inRandomOrder()->take(3)->get();
         $user = Auth::user();
 
         return response()->json([
             'user' => $user,
+            'similair_products' => $similair_products,
             'product' => $product,
         ]);
     }
