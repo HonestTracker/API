@@ -122,17 +122,15 @@ class ProductController extends Controller
     }
     public function search_product_web(Request $request)
     {
-        $searchData = $request->search_data;
+        $search_data = $request->search_data;
 
-        // Assuming your logic to filter products based on search data
-        $products = Product::where('name', 'like', '%' . $searchData . '%')
+        $products = Product::where('name', 'like', '%' . $search_data . '%')
             ->with('prices')
             ->with('site')
             ->get();
 
-        // Fetch categories related to the searched products
-        $categories = Category::whereHas('sites.products', function ($query) use ($searchData) {
-            $query->where('name', 'like', '%' . $searchData . '%');
+        $categories = Category::whereHas('sites.products', function ($query) use ($search_data) {
+            $query->where('name', 'like', '%' . $search_data . '%');
         })
             ->with('sites.products')
             ->get();
@@ -167,11 +165,9 @@ class ProductController extends Controller
     {
         $categories = $request->input('categories');
 
-        // Extract category_id and site_id from each category object
         $categoryIds = collect($categories)->pluck('category_id')->toArray();
         $siteIds = collect($categories)->pluck('site_id')->toArray();
 
-        // Query products based on category_id and site_id
         $products = Product::whereIn('site_id', $siteIds)
             ->whereHas('site', function ($query) use ($categoryIds) {
                 $query->whereIn('category_id', $categoryIds);
@@ -179,7 +175,6 @@ class ProductController extends Controller
             ->with(['prices', 'site.category'])->get();
 
         $user = auth()->user();
-        // Return response with filtered products
         return response()->json([
             'user' => $user,
             'products' => $products,
@@ -212,10 +207,10 @@ class ProductController extends Controller
             } elseif ($site_name == "coolblue.nl") {
                 $products = $crawler->filter('div.product-card');
             } else {
-                continue; // Skip unknown sites or handle differently
+                continue;
             }
 
-            $products = $products->slice(0, 5); // Limit to first 5 products
+            $products = $products->slice(0, 10);
 
             $ids = [];
 
@@ -285,7 +280,6 @@ class ProductController extends Controller
                                     $last_recorded_price = $last_price->price;
                                     $change_percentage = (($price - $last_recorded_price) / $last_recorded_price) * 100;
                                 } else {
-                                    // No previous price recorded, set a default change percentage
                                     $change_percentage = 0;
                                 }
 
