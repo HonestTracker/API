@@ -44,7 +44,7 @@ Route::get('products', [ProductController::class, 'product_page_web'])->name('pr
 Route::get('products/search', [ProductController::class, 'search_product_web'])->name('search_products_web');
 Route::post('products/filter', [ProductController::class, 'filter_products_web'])->name('filter_products_web');
 Route::get('products/{id}', [ProductController::class, 'get_product_by_id'])->name('product_by_id');
-Route::get('products/comments/post', [CommentController::class, 'store'])->name('store');
+Route::post('products/comments/post', [CommentController::class, 'store'])->name('store');
 Route::group(['prefix' => 'categories'], function ($router) {
 });
 
