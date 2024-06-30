@@ -19,6 +19,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('userdetails', [AuthController::class, 'user_details'])->name('userdetails');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::middleware('jwt.auth')->get('user', [AuthController::class, 'user'])->name('user');
+    Route::middleware('jwt.auth')->get('user/favorites', [ProductController::class, 'favorites_web'])->name('favorites');
     Route::middleware('jwt.auth')->post('edit', [AuthController::class, 'edit'])->name('edit');
     Route::middleware('jwt.auth')->post('edit/password', [AuthController::class, 'edit_password'])->name('password');
 

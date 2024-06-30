@@ -38,4 +38,8 @@ class Product extends Model
     {
         return $this->HasMany(Comment::class);
     }
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(Favorite::class);
+    }
 }

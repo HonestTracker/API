@@ -363,5 +363,17 @@ class ProductController extends Controller
             'comment_count' => $comment_count,
         ]);
     }
-
+    public function favorites_web(Request $request)
+    {
+        if ($request->amount !== null) {
+            $products = Product::with(['prices', 'site.category'])->take($request->amount)->get();
+        } else {
+            $products = Product::with(['prices', 'site.category'])->get();
+        }
+        $user = Auth::user();
+        return response()->json([
+            "user" => $user,
+            "products" => $products
+        ]);
+    }
 }
