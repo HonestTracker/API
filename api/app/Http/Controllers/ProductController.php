@@ -15,7 +15,11 @@ class ProductController extends Controller
 {
     public function homepage(Request $request)
     {
-        return response()->json($request->all());
+        if ($request->amount !== null) {
+            $products = Product::with(['prices', 'site.category'])->take($request->amount)->get();
+        } else {
+            $products = Product::with(['prices', 'site.category'])->get();
+        }
         $user = Auth::user();
         return response()->json([
             "user" => $user,
@@ -161,6 +165,7 @@ class ProductController extends Controller
     }
     public function filter_products_web(Request $request)
     {
+        return response()->json($request->all());
         try {
             // Retrieve query parameters
             $category_id = $request->query('category_id');
