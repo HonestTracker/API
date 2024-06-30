@@ -12,6 +12,7 @@ class CommentController extends Controller
 {
     public function store(StoreCommentRequest $request)
     {
+        return response()->json($request->all());
        $user = User::where('id', $request->user_id)->first();
        $product = Product::where('id', $request->product_id)->first();
        $comment = new Comment();
