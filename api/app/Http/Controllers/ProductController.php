@@ -35,7 +35,7 @@ class ProductController extends Controller
         // Get the latest 5 products with a negative change_percentage (latest drops)
         $latest_drop_products = Product::where('change_percentage', '<', 0)->with('site')->latest('updated_at')->take(5)->get();
         // Get the latest 5 updated products
-        $latest_updated_products = Product::with('site')->latest('updated_at')->take(5)->get();
+        $latest_updated_products = Product::with('site')->latest('updated_at')->take(5)->where('change_percentage' !== 0.00)->get();
         return response()->json([
             "featured_product" => $featured_product,
             "featured_categories" => $featured_categories,
