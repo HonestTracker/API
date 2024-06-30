@@ -229,7 +229,7 @@ class ProductController extends Controller
                         } else {
                             $price = preg_replace('/[- ]/', '', $raw_price);
                         }
-                        $image = $product->filter('img[data-test="product-main-image"]')->attr('src');
+                        $image = $product->filter('#image-zoom-modal-selected-image')->attr('src');
                         $image_url = $image;
                         $product_check = Product::where('site_id', $site->id)->where('name', $title)->exists();
 
