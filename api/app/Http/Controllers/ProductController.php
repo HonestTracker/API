@@ -324,12 +324,12 @@ class ProductController extends Controller
         if (!$product) {
             return response()->json(['error' => 'Product not found'], 404);
         }
-        $similair_products = Product::where('site.category_id', $product->site->category_id)->inRandomOrder()->take(3)->get();
+        //$similair_products = Product::where('site.category_id', $product->site->category_id)->inRandomOrder()->take(3)->get();
         $user = Auth::user();
 
         return response()->json([
             'user' => $user,
-            'similair_products' => $similair_products,
+            //'similair_products' => $similair_products,
             'product' => $product,
         ]);
     }
