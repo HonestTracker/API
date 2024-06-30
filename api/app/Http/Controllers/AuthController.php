@@ -139,7 +139,7 @@ class AuthController extends \Illuminate\Routing\Controller
     public function profile()
     {
         $user = auth()->user();
-
+        return response()->json($user);
         // Check if user is authenticated
         if (!$user) {
             return response()->json(['error' => 'Unauthorized'], 401);
