@@ -142,9 +142,19 @@ class AuthController extends \Illuminate\Routing\Controller
             $user->email = $request->email;
         }
         if ($request->hasFile('picture')) {
-            $picture = $request->file('picture');
-            $picturePath = $picture->store('profile_pictures', 'public'); // Store the image in storage/app/public/profile_pictures
-            $user->picture_url = $picturePath;
+            $folder = 'users/' . $user->id;
+
+            // Store the file in the specified folder within the 'public' disk
+            $path = $request->file('picture')->store($folder, 'public');
+    
+            // Generate a URL for accessing the stored image
+            $url = Storage::url($path);
+    
+            // Find the user by the provided user_id
+            $userToUpdate = User::find($request->user_id);
+    
+            // Update user's profile picture path and name in the database
+            $userToUpdate->picture_url = $url; // Storing the URL instead of the path
         }
         $user->update();
         return response()->json($user);
