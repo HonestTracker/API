@@ -165,29 +165,25 @@ class ProductController extends Controller
     }
     public function filter_products_web(Request $request)
     {
-        return response()->json($request->all());
-        try {
-            // Retrieve query parameters
-            $category_id = $request->query('category_id');
-            $site_id = $request->query('site_id');
-    
-            // Example: Query products based on category_id and site_id
-            $products = Product::where('category_id', $category_id)
-                               ->where('site_id', $site_id)
-                               ->get();
-    
-            // Return response with products or any other data as needed
-            $user = auth()->user();
-            return response()->json([
-                'products' => $products,
-                'user' => $user,
-            ]);
-        } catch (\Exception $e) {
-            // Handle exceptions
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], 500);
-        }
+        $categories = $request->input('categories');
+
+        // Extract category_id and site_id from each category object
+        $categoryIds = collect($categories)->pluck('category_id')->toArray();
+        $siteIds = collect($categories)->pluck('site_id')->toArray();
+
+        // Query products based on category_id and site_id
+        $products = Product::whereIn('site_id', $siteIds)
+            ->whereHas('site', function ($query) use ($categoryIds) {
+                $query->whereIn('category_id', $categoryIds);
+            })
+            ->get();
+
+        $user = auth()->user();
+        // Return response with filtered products
+        return response()->json([
+            'user' => $user,
+            'products' => $products,
+        ]);
     }
     public function delete(Product $product)
     {
