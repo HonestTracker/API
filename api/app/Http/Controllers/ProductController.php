@@ -176,7 +176,7 @@ class ProductController extends Controller
             ->whereHas('site', function ($query) use ($categoryIds) {
                 $query->whereIn('category_id', $categoryIds);
             })
-            ->get();
+            ->with(['prices', 'site.category'])->get();
 
         $user = auth()->user();
         // Return response with filtered products
