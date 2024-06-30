@@ -31,13 +31,23 @@ class ProductController extends Controller
         $featured_product = Product::inRandomOrder()->with(['prices', 'site.category'])->first();
         $featured_categories = Category::inRandomOrder()->take(3)->get();
         // Get the latest 5 products with a positive change_percentage (latest rises)
-        $latest_rise_products = Product::where('change_percentage', '>', 0)->with('site')->latest('updated_at')->take(5)->get();
-        // Get the latest 5 products with a negative change_percentage (latest drops)
-        $latest_drop_products = Product::where('change_percentage', '<', 0)->with('site')->latest('updated_at')->take(5)->get();
-        // Get the latest 5 updated products
-        $latest_updated_products = Product::with('site')
-        ->where('change_percentage', '<>', '0.00')
-        ->latest('updated_at')
+        $latest_rise_products = Product::where('change_percentage', '>', 0)
+        ->with('site')
+        ->orderBy('updated_at', 'desc')
+        ->take(5)
+        ->get();
+
+    // Get the latest 5 products with a negative change_percentage (latest drops)
+    $latest_drop_products = Product::where('change_percentage', '<', 0)
+        ->with('site')
+        ->orderBy('updated_at', 'desc')
+        ->take(5)
+        ->get();
+
+    // Get the latest 5 products with a non-zero change_percentage (latest updates)
+    $latest_updated_products = Product::where('change_percentage', '<>', '0.00')
+        ->with('site')
+        ->orderBy('updated_at', 'desc')
         ->take(5)
         ->get();
         return response()->json([
