@@ -335,7 +335,7 @@ class ProductController extends Controller
 
         return response()->json([
             'user' => $user,
-            'similair_products' => $similar_products,
+            'similar_products' => $similar_products,
             'product' => $product,
         ]);
     }
