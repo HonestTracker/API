@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CrawlController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,7 +20,9 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('userdetails', [AuthController::class, 'user_details'])->name('userdetails');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::middleware('jwt.auth')->get('user', [AuthController::class, 'user'])->name('user');
-    Route::middleware('jwt.auth')->get('user/favorites', [ProductController::class, 'favorites_web'])->name('favorites');
+    Route::middleware('jwt.auth')->get('/profile', [AuthController::class, 'profile'])->name('profile');
+    Route::middleware('jwt.auth')->get('user/favorites', [FavoriteController::class, 'index_web'])->name('favorites');
+    Route::middleware('jwt.auth')->get('user/favorites/store', [FavoriteController::class, 'store'])->name('favorites');
     Route::middleware('jwt.auth')->post('edit', [AuthController::class, 'edit'])->name('edit');
     Route::middleware('jwt.auth')->post('edit/password', [AuthController::class, 'edit_password'])->name('password');
 

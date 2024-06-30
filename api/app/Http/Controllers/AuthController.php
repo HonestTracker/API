@@ -135,6 +135,12 @@ class AuthController extends \Illuminate\Routing\Controller
             "user" => auth()->user(),
         ]);
     }
+    public function profile()
+    {
+        return response()->json([
+            "user" => auth()->user(),
+        ]);
+    }
     public function edit(EditAccountRequest $request)
     {
         $user = auth()->user();
