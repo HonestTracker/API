@@ -165,13 +165,28 @@ class ProductController extends Controller
     }
     public function filter_products_web(Request $request)
     {
-        return response()->json($request->all());
-        $user = Auth::user();
-
-        return response()->json([
-            "user" => $user,
-            "products" => $products
-        ]);
+        try {
+            // Retrieve query parameters
+            $category_id = $request->query('category_id');
+            $site_id = $request->query('site_id');
+    
+            // Example: Query products based on category_id and site_id
+            $products = Product::where('category_id', $category_id)
+                               ->where('site_id', $site_id)
+                               ->get();
+    
+            // Return response with products or any other data as needed
+            $user = auth()->user();
+            return response()->json([
+                'products' => $products,
+                'user' => $user,
+            ]);
+        } catch (\Exception $e) {
+            // Handle exceptions
+            return response()->json([
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
     public function delete(Product $product)
     {
