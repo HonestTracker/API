@@ -140,7 +140,6 @@ class AuthController extends \Illuminate\Routing\Controller
             'email' => 'nullable|email',
         ]);
         $user = auth()->user();
-        return response()->json($user);
         if ($request->name !== null) {
             $user->name = $request->name;
         }
