@@ -22,4 +22,8 @@ class CommentController extends Controller
        $comment->save();
        return response()->json("Saved!");
     }
+    public function delete(Request $request)
+    {
+       return response()->json($request->all());
+    }
 }

@@ -30,7 +30,7 @@ class CrawlController extends Controller
                 $crawler = new Crawler($html);
                 $date = Carbon::now();
 
-                $price = null; // Initialize price
+                $price = null;
 
                 if ($product->site->site_name == "bol.com") {
                     $raw_price = $crawler->filter('span[data-test="price"]')->text();
