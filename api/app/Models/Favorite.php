@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Favorite extends Model
 {
     use HasFactory;
-    use HasFactory;
 
     protected $table = 'favorite_products';
     protected $fillable = [
