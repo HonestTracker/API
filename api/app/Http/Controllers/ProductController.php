@@ -342,7 +342,7 @@ class ProductController extends Controller
             ->get();
 
         $user = Auth::user();
-        $comments = Comment::where('product_id', $product->id)->orderBy('created_at', "desc")->get();
+        $comments = Comment::where('product_id', $product->id)->orderBy('created_at', "desc")->with('user')->get();
         return response()->json([
             'user' => $user,
             'similar_products' => $similar_products,
