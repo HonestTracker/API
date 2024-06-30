@@ -142,6 +142,7 @@ class AuthController extends \Illuminate\Routing\Controller
             $user->email = $request->email;
         }
         if ($request->hasFile('picture')) {
+            return response()->json('WHAAAAA');
             $user = User::where("id", $request->user_id)->first();
 
             // Create a folder path based on the user's ID or username
