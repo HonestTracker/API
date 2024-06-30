@@ -134,7 +134,7 @@ class AuthController extends \Illuminate\Routing\Controller
     public function edit(Request $request)
     {
         $request->validate([
-            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // adjust max size as needed
+            'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240', // adjust max size as needed
             'name' => 'nullable|string|max:255',
             'user_id' => 'required|integer',
             'email' => 'nullable|email',
