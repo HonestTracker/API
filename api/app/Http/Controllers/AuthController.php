@@ -230,17 +230,4 @@ class AuthController extends \Illuminate\Routing\Controller
             return response()->json(['error' => 'Could not authenticate with Google', 'message' => $e->getMessage()], 500);
         }
     }
-    public function about()
-    {
-        return response()->json('test');
-        $product_count = Product::count();
-        $user_count = User::count();
-        $comment_count = Comment::count();
-
-        return response()->json([
-            'product_count' => $product_count,
-            'user_count' => $user_count,
-            'comment_count' => $comment_count,
-        ]);
-    }
 }
