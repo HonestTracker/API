@@ -229,13 +229,15 @@ class ProductController extends Controller
                         } else {
                             $price = preg_replace('/[- ]/', '', $raw_price);
                         }
-
+                        $image = $product->filter('img[data-test="product-main-image"]')->attr('src');
+                        $image_url = $image;
                         $product_check = Product::where('site_id', $site->id)->where('name', $title)->exists();
 
                         if ($product_check) {
                             $action = "update";
                             $product = Product::where('site_id', $site->id)->where('name', $title)->first();
                             $product->current_price = $price;
+                            $product->picture_url = $image_url;
                             $product->update();
                         } else {
                             $action = "new";
@@ -255,6 +257,7 @@ class ProductController extends Controller
                             $product->current_price = $price;
                             $product->url = "https://www.bol.com" . $link;
                             $product->currency = "EUR";
+                            $product->picture_url = $image_url;
                             $product->save();
                         }
 
