@@ -7,6 +7,7 @@ use App\Models\CategorySite;
 use App\Models\Comment;
 use App\Models\Product;
 use App\Models\ProductPrice;
+use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -352,7 +353,6 @@ class ProductController extends Controller
     }
     public function about_web()
     {
-        return response()->json('test');
         $product_count = Product::count();
         $user_count = User::count();
         $comment_count = Comment::count();
