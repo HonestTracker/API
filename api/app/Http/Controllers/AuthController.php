@@ -153,6 +153,7 @@ class AuthController extends \Illuminate\Routing\Controller
             $user->picture_url = $picturePath;
         }
         $user->update();
+        return response()->json($user);
     }
 
     //Functie voor het uitloggen van een ingelogde gebruiker
