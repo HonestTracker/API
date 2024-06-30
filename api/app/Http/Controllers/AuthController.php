@@ -66,7 +66,7 @@ class AuthController extends \Illuminate\Routing\Controller
 
         // Attempt to get a token with the provided credentials
         if (!$token = auth('api')->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Invalid credentials. Please check your email and password.'], 401);
         }
 
         // Adjust token TTL based on device type
