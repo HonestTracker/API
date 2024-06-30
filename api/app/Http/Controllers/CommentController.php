@@ -13,7 +13,7 @@ class CommentController extends Controller
     {
        $user = User::where('id', $request->user_id)->first();
        $product = Product::where('id', $request->product_id)->first();
-       return response()->json($request->all(), $user, $product);
+       return response()->json([$request->all(), $user, $product]);
        $comment = new Comment();
        $comment->user_id = $user->id;
        $comment->product_id = $product->id;
