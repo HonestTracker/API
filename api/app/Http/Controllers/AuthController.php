@@ -9,6 +9,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\EditAccountRequest;
 use App\Http\Requests\EditPasswordRequest;
 use App\Models\Comment;
+use App\Models\Favorite;
 use App\Models\Product;
 use App\Models\User;
 use Exception;
@@ -137,8 +138,13 @@ class AuthController extends \Illuminate\Routing\Controller
     }
     public function profile()
     {
+        $user = auth()->user();
+        $favorites = Favorite::where('user_id', $user->id)->orderBy('date_created', 'desc')->get();
+        $comments = Comment::where('user_id', $user->id)->orderBy('date_created', 'desc')->with('product')->get();
         return response()->json([
-            "user" => auth()->user(),
+            "user" => $user,
+            'favorites' => $favorites,
+            "comments" => $comments,
         ]);
     }
     public function edit(EditAccountRequest $request)
