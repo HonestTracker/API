@@ -8,6 +8,8 @@ use App\Http\Requests\ApiRegisterRequest;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\EditAccountRequest;
 use App\Http\Requests\EditPasswordRequest;
+use App\Models\Comment;
+use App\Models\Product;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -227,5 +229,16 @@ class AuthController extends \Illuminate\Routing\Controller
         } catch (Exception $e) {
             return response()->json(['error' => 'Could not authenticate with Google', 'message' => $e->getMessage()], 500);
         }
+    }
+    public function about()
+    {
+        $product_count = Product::count();
+        $user_count = User::count();
+        $comment_count = Comment::count();
+        return response()->json([
+            'product_count' => $product_count,
+            'user_count' => $user_count,
+            'comment_count' => $comment_count,
+        ]);
     }
 }
