@@ -32,10 +32,15 @@ class CategoryController extends Controller
     }
     public function delete_admin(Category $category)
     {
-        foreach($category->products as $product)
+        $delete_check = CategorySite::where('category_id', $category->id)->get();
+        if($delete_check)
         {
-            $product->delete();
+            foreach($delete_check as $product)
+            {
+                $product->delete();
+            }
         }
+
         return redirect('/admin/categories')->with('success', "Category deleted!");
     }
 }
