@@ -72,7 +72,7 @@
                 </table>
             </div>
             <div class="mt-3">
-                {{ $categories->links() }}
+                {{ $comments->links() }}
             </div>
         @endif
     </div>
