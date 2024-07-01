@@ -37,6 +37,18 @@ class CategoryController extends Controller
         {
             foreach($delete_check as $product)
             {
+                foreach($product->prices as $price)
+                {
+                    $price->delete();   
+                }
+                foreach($product->comments as $comment)
+                {
+                    $comment->delete();
+                }
+                foreach($product->favorites as $favorite)
+                {
+                    $favorite->delete();
+                }
                 $product->delete();
             }
         }
