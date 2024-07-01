@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Models\Category;
 use App\Models\CategorySite;
+use App\Models\ProductPrice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
@@ -32,26 +34,29 @@ class CategoryController extends Controller
     }
     public function delete_admin(Category $category)
     {
-        $delete_check = CategorySite::where('category_id', $category->id)->get();
-        if($delete_check)
-        {
-            foreach($delete_check as $product)
-            {
-                foreach($product->prices as $price)
-                {
-                    $price->delete();   
+        DB::transaction(function () use ($category) {
+            // Get all related CategorySite records
+            $sites = $category->sites;
+
+            foreach ($sites as $site) {
+                // Get all related Product records for each site
+                $products = $site->products;
+
+                foreach ($products as $product) {
+                    // Delete related ProductPrice records for each product
+                    ProductPrice::where('product_id', $product->id)->delete();
+
+                    // Delete the product itself
+                    $product->delete();
                 }
-                foreach($product->comments as $comment)
-                {
-                    $comment->delete();
-                }
-                foreach($product->favorites as $favorite)
-                {
-                    $favorite->delete();
-                }
-                $product->delete();
+
+                // Delete the site itself
+                $site->delete();
             }
-        }
+
+            // Finally, delete the category
+            $category->delete();
+        });
 
         return redirect('/admin/categories')->with('success', "Category deleted!");
     }
