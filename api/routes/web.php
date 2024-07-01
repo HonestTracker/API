@@ -33,7 +33,7 @@ Route::middleware('auth')->group(function () {
             Route::group(['prefix' => '{category}'], function () {
                 Route::get('edit', [CategoryController::class, 'edit_admin'])->name('edit');
                 Route::post('update', [CategoryController::class, 'update_admin'])->name('update');
-                Route::post('delete', [CategoryController::class, 'delete_admin'])->name('delete');
+                Route::delete('delete', [CategoryController::class, 'delete_admin'])->name('delete');
                 Route::group(['prefix' => 'sites', 'as' => 'sites.'], function () {
                     Route::get('', [AdminController::class, 'index_sites'])->name('index');
                     Route::get('create', [SiteController::class, 'create'])->name('create');
