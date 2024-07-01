@@ -20,10 +20,10 @@
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                         <tr>
                             <th scope="col" class="px-6 py-3">
-                                Name
+                                Text
                             </th>
                             <th scope="col" class="px-6 py-3">
-                                User
+                                Posted by
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 Created at
