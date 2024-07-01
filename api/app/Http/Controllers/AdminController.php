@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\CategorySite;
+use App\Models\Comment;
 use App\Models\Product;
 use App\Models\User;
 use App\Policies\AdminPolicy;
@@ -34,5 +35,10 @@ class AdminController extends Controller
     public function index_sites(Category $category)
     {
         return view('admin.categories.sites.index', compact('category'));
+    }
+    public function index_comments()
+    {
+        $comments = Comment::orderBy('created_at', 'DESC')->paginate(8);
+        return view('admin.comments.index', compact('comments'));
     }
 }

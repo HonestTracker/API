@@ -15,7 +15,7 @@
                 Products
             </li>
         </a>
-        <a href="#" class="block">
+        <a href="{{ route('admin.comments.index') }}" class="block">
             <li class="p-4 hover:bg-gray-200 cursor-pointer">
                 Comments
             </li>

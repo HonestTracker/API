@@ -49,6 +49,12 @@ Route::middleware('auth')->group(function () {
                 Route::delete('delete', [ProductController::class, 'delete'])->name('delete');
             });
         });
+        Route::group(['prefix' => 'comments', 'as' => 'comments.'], function () {
+            Route::get('', [AdminController::class, 'index_comments'])->name('index');
+            Route::group(['prefix' => '{product}'], function () {
+                Route::delete('delete', [ProductController::class, 'delete'])->name('delete');
+            });
+        });
     });
 });
 
