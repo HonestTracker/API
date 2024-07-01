@@ -69,7 +69,7 @@
                                             @method('delete')
                                         </form>
                                         <button type="submit"
-                                            onclick="if (confirm('Weet je zeker dat je {{ $category->name }} wilt verwijderen?')) { event.preventDefault(); document.getElementById('user-delete-form-{{ $user->id }}').submit(); }""
+                                            onclick="if (confirm('Weet je zeker dat je {{ $category->name }} wilt verwijderen?')) { event.preventDefault(); document.getElementById('category-delete-form-{{ $category->id }}').submit(); }""
                                             class="font-medium text-red-600 hover:underline"><svg
                                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
