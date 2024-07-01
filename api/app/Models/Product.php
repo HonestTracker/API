@@ -22,9 +22,9 @@ class Product extends Model
         'currency',
         'picture_url',
     ];
-    public function site(): BelongsTo
+    public function site(): HasOne
     {
-        return $this->belongsTo(CategorySite::class, 'site_id');
+        return $this->hasOne(CategorySite::class, 'site_id');
     }
     public function prices(): HasMany
     {
