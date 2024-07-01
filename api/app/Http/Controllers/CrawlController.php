@@ -13,10 +13,6 @@ use Illuminate\Http\Request;
 class CrawlController extends Controller
 {
     protected $signature = 'crawl';
-    public function test()
-    {
-        return "test";
-    }
     public function crawl()
     {
         $products = Product::all();
