@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Models\Category;
 use App\Models\CategorySite;
+use App\Models\Comment;
 use App\Models\ProductPrice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -46,9 +47,13 @@ class CategoryController extends Controller
                     // Delete related ProductPrice records for each product
                     ProductPrice::where('product_id', $product->id)->delete();
 
+                    // Delete related Comment records for each product
+                    Comment::where('product_id', $product->id)->delete();
+
                     // Delete the product itself
                     $product->delete();
                 }
+
 
                 // Delete the site itself
                 $site->delete();
